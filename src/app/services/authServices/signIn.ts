@@ -5,10 +5,10 @@ export interface SigninParams {
   password: string;
 }
 
-interface SigninResponse { accessToken: string, refreshToken: string  }
+interface SigninResponse { data: { accessToken: string, refreshToken: string } }
 
 export async function signIn(params: SigninParams) {
-  const { data } = await httpClient.post<SigninResponse>('/auth/signin', params);
-
-  return data;
+  const { data: response } = await httpClient.post<SigninResponse>('/auth/signin', params);
+  const { data } = response;
+  return { ...data }
 }
