@@ -8,8 +8,6 @@ interface AuthGuardProps {
 export function AuthGuard({isPrivate}: AuthGuardProps) {
   const { isAuthenticated } = useAuth.getState();
 
-  console.log(isAuthenticated);
-
   if (!isAuthenticated && isPrivate) return <Navigate to="/login" replace/>
   if(isAuthenticated && !isPrivate) return <Navigate to="/" replace/>
   
