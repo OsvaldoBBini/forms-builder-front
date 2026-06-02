@@ -7,6 +7,7 @@ interface IAuthState {
   refreshToken: string | null;
   isAuthenticated: boolean;
   signIn: (accessToken: string, refreshToken: string) => void;
+  signOut: () => void;
 }
 
 const isTokenValid = (token: string | null): boolean => {
@@ -34,7 +35,16 @@ export const useAuth = create<IAuthState>()(
           accessToken, 
           refreshToken
         }
-      ) 
+      ),
+      
+      signOut: () => {
+        localStorage.removeItem("auth-storage");
+        set({ 
+          accessToken: null, 
+          refreshToken: null, 
+          isAuthenticated: false 
+        })
+      }
 
      }),
     {
