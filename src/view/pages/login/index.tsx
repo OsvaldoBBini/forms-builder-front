@@ -10,13 +10,17 @@ import {
 import { Input } from "@/components/ui/input"
 import { useLogin } from "./useLogin"
 import { XCircleIcon } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export function Login() {
 
   const { handleSubmit, register, errors, isPending } = useLogin()
 
   return (
-    <section>
+    <section className="flex flex-col gap-y-6">
+
+      <h1 className="text-center text-xl font-bold">Acesse sua conta</h1>
+
       <form className="flex flex-col gap-y-4" onSubmit={handleSubmit}>
         <FieldGroup>
           <Field data-invalid={!!errors.email}>
@@ -50,7 +54,7 @@ export function Login() {
           </Field>
         </FieldGroup>
         
-        <a className="text-right mt-1 underline decoration-1" href="http://google.com">Esqueci a senha</a>
+        <Link className="text-right mt-1 underline decoration-1" to="/forgot-password">Esqueci a senha</Link>
         
         <Button type="submit" disabled={isPending}>
           {isPending && <Spinner data-icon="inline-start"/>}
@@ -58,13 +62,11 @@ export function Login() {
         </Button>
       </form>
 
-      <Separator className="mb-4 mt-4"/>
+      <Separator/>
 
-      <div>
-        <h3>
-          Não possui uma conta ainda? <a className="underline decoration-1" href="http://google.com">Cadastre-se</a>
-        </h3>
-      </div>
+      <h3>
+        Não possui uma conta ainda? <Link className="underline decoration-1" to="/register">Cadastre-se</Link>
+      </h3>
 
     </section>
   )

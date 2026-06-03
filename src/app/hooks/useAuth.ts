@@ -33,7 +33,8 @@ export const useAuth = create<IAuthState>()(
       signIn: (accessToken: string, refreshToken: string) => set(
         { 
           accessToken, 
-          refreshToken
+          refreshToken,
+          isAuthenticated: true
         }
       ),
       
