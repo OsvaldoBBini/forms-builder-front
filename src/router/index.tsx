@@ -2,12 +2,9 @@ import { AuthLayout } from '@/view/layouts/AuthLayout'
 import { Login } from '@/view/pages/login'
 import {Routes, Route, BrowserRouter } from 'react-router-dom'
 import { AuthGuard } from './authGuard'
-import { useAuth } from '@/app/hooks/useAuth'
-
+import { Home } from '@/view/pages/home'
 
 export function Router() {
-
-  const signOut = useAuth((state) => state.signOut) 
 
   return(
     <BrowserRouter>
@@ -20,12 +17,7 @@ export function Router() {
         </Route>
 
         <Route element={<AuthGuard isPrivate/>}>
-          <Route path='/' element={
-            <div>
-              <h1>Dash</h1>
-              <button onClick={signOut}>Sair</button>
-            </div>
-          }/>
+          <Route path='/' element={<Home/>}/>
         </Route>
         
       </Routes>
