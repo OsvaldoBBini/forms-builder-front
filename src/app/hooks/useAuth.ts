@@ -29,7 +29,7 @@ export const useAuth = create<IAuthState>()(
       updateAccessToken: (accessToken: string) => set({ accessToken }),
       
       signOut: () => {
-        localStorage.removeItem("auth-storage");
+        // localStorage.removeItem("auth-storage");
         set({ 
           accessToken: null, 
           refreshToken: null, 

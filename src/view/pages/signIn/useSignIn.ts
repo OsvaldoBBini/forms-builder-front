@@ -14,7 +14,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-export function useLogin() {
+export function useSignIn() {
 
   const signIn = useAuth((state) => state.signIn) 
 

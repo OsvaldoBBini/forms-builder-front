@@ -3,7 +3,7 @@
 import { renderHook, waitFor } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { vi, describe, it, expect, beforeEach } from "vitest"
-import { useLogin } from "./useLogin"
+import { useSignIn } from "./useSignIn"
 import { useAuth } from "@/app/hooks/useAuth"
 import { authService } from "@/app/services/authServices"
 import { toast } from "sonner"
@@ -45,7 +45,7 @@ const createWrapper = () => {
   )
 }
 
-describe("Custom Hook: useLogin", () => {
+describe("Custom Hook: useSignIn", () => {
   const mockSignIn = vi.fn()
 
   beforeEach(() => {
@@ -62,7 +62,7 @@ describe("Custom Hook: useLogin", () => {
       refreshToken: "vitest-refresh-sucesso",
     })
 
-    const { result } = renderHook(() => useLogin(), { wrapper: createWrapper() })
+    const { result } = renderHook(() => useSignIn(), { wrapper: createWrapper() })
 
     result.current.handleSubmit({ preventDefault: vi.fn() })
 
@@ -80,7 +80,7 @@ describe("Custom Hook: useLogin", () => {
 
     vi.mocked(authService.signIn).mockRejectedValue(new Error("Erro de autenticação"))
 
-    const { result } = renderHook(() => useLogin(), { wrapper: createWrapper() })
+    const { result } = renderHook(() => useSignIn(), { wrapper: createWrapper() })
 
     result.current.handleSubmit({ preventDefault: vi.fn() })
 
