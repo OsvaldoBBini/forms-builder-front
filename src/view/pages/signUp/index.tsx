@@ -7,25 +7,17 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { LoginChange } from "@/components/loginChange";
 
-interface ISignUp {
-  onSelect: () => void;
-}
 
-export function SignUp({ onSelect }: ISignUp) {
+export function SignUp() {
 
   const isPending = false;
 
   return (
     <section className="flex gap-x-4 min-w-xl">
-      <div className="flex-1 flex flex-col justify-center items-center">
-        <h3>
-          Bem vindo de volta!!
-        </h3>
-        <Button onClick={onSelect}>
-          Entrar
-        </Button>
-      </div>
+      
+      <LoginChange actionText="Entrar" label="Bem vindo de volta!!" />
 
       <div className="flex-1 flex flex-col gap-y-6 w-full">
         <h1 className="text-center text-xl font-bold">Cadastre-se</h1>

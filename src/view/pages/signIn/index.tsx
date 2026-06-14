@@ -10,12 +10,10 @@ import { Input } from "@/components/ui/input"
 import { useSignIn } from "./useSignIn"
 import { XCircleIcon } from "lucide-react"
 import { Link } from "react-router-dom"
+import { LoginChange } from "@/components/loginChange"
 
-interface ISignIn {
-  onSelect: () => void;
-}
 
-export function SignIn({ onSelect }: ISignIn) {
+export function SignIn() {
 
   const { handleSubmit, register, errors, isPending } = useSignIn()
 
@@ -65,14 +63,7 @@ export function SignIn({ onSelect }: ISignIn) {
           </form>
         </div>
 
-        <div className="flex-1 flex flex-col justify-center items-center">
-          <h3>
-            Novo por aqui? 
-          </h3>
-          <Button onClick={onSelect}>
-            Cadastre-se
-          </Button>
-        </div>
+        <LoginChange actionText="Cadastre-se" label="Novo por aqui?" />
       </section>
   )
 }
