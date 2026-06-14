@@ -11,14 +11,15 @@ import { useSignIn } from "./useSignIn"
 import { XCircleIcon } from "lucide-react"
 import { Link } from "react-router-dom"
 import { LoginChange } from "@/components/loginChange"
-
+import { PageAnimation } from "@/view/layouts/animation/PageAnimation"
 
 export function SignIn() {
-
   const { handleSubmit, register, errors, isPending } = useSignIn()
 
   return (
-      <section className="flex gap-x-4 min-w-xl">
+    <PageAnimation>
+      <section 
+        className="flex gap-x-4 min-w-xl">
         <div className="flex-1 flex flex-col gap-y-6 w-full">
           <h1 className="text-center text-xl font-bold">Acesse sua conta</h1>
           <form className="flex flex-col gap-y-4" onSubmit={handleSubmit}>
@@ -63,7 +64,8 @@ export function SignIn() {
           </form>
         </div>
 
-        <LoginChange actionText="Cadastre-se" label="Novo por aqui?" />
+        <LoginChange router="signup" actionText="Cadastre-se" label="Novo por aqui?" />
       </section>
+    </PageAnimation>
   )
 }

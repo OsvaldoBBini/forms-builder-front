@@ -4,25 +4,27 @@ import { AuthGuard } from './authGuard'
 import { Home } from '@/view/pages/home'
 import { SignIn } from '@/view/pages/signIn'
 import { SignUp } from '@/view/pages/signUp'
+import { AnimatePresence } from "motion/react"
 
 export function Router() {
 
   return(
     <BrowserRouter>
-      <Routes>
-        
-        <Route element={<AuthGuard isPrivate={false}/>}>
-          <Route element={<AuthLayout/>}>
-            <Route path="/signin" element={<SignIn/>}/>
-            <Route path="/signup" element={<SignUp/>}/>
+      <AnimatePresence mode='wait'>
+        <Routes>      
+          <Route element={<AuthGuard isPrivate={false}/>}>
+            <Route element={<AuthLayout/>}>
+              <Route path="/signin" element={<SignIn/>}/>
+              <Route path="/signup" element={<SignUp/>}/>
+            </Route>
           </Route>
-        </Route>
 
         <Route element={<AuthGuard isPrivate/>}>
           <Route path='/' element={<Home/>}/>
         </Route>
         
-      </Routes>
+        </Routes>
+      </AnimatePresence>
     </BrowserRouter>
   )
 }
