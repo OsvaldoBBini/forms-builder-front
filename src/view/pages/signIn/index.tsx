@@ -11,7 +11,7 @@ import { useSignIn } from "./useSignIn"
 import { XCircleIcon } from "lucide-react"
 import { Link } from "react-router-dom"
 import { LoginChange } from "@/components/loginChange"
-import { PageAnimation } from "@/view/layouts/animation/PageAnimation"
+import { PageAnimation } from "@/view/layouts/animation/pageAnimation"
 
 export function SignIn() {
   const { handleSubmit, register, errors, isPending } = useSignIn()

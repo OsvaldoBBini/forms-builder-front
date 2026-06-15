@@ -2,9 +2,11 @@ import { create } from "zustand"
 import { persist } from 'zustand/middleware';
 
 interface IAuthState {
+  userId: string | null;
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
+  storeUserId: (userId: string) => void;
   signIn: (accessToken: string, refreshToken: string) => void;
   updateAccessToken: (accessToken: string) => void;
   signOut: () => void;
@@ -14,9 +16,12 @@ export const useAuth = create<IAuthState>()(
   persist(
     (set) => ({ 
 
+      userId: null,
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
+
+      storeUserId: (userId: string) => set({ userId }),
 
       signIn: (accessToken: string, refreshToken: string) => set(
         { 
@@ -29,7 +34,6 @@ export const useAuth = create<IAuthState>()(
       updateAccessToken: (accessToken: string) => set({ accessToken }),
       
       signOut: () => {
-        // localStorage.removeItem("auth-storage");
         set({ 
           accessToken: null, 
           refreshToken: null, 
