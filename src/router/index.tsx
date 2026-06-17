@@ -5,7 +5,7 @@ import { Home } from '@/view/pages/home'
 import { SignIn } from '@/view/pages/signIn'
 import { SignUp } from '@/view/pages/signUp'
 import { AnimatePresence } from "motion/react"
-import { CodeConfirmation } from '@/view/pages/code-confirmation'
+import { ConfirmationAccount } from '@/view/pages/confirmationAccount'
 
 export function Router() {
 
@@ -17,7 +17,7 @@ export function Router() {
             <Route element={<AuthLayout/>}>
               <Route path="/signin" element={<SignIn/>}/>
               <Route path="/signup" element={<SignUp/>}/>
-              <Route path="/account-confirmation" element={<CodeConfirmation/>}/>
+              <Route path="/account-confirmation" element={<ConfirmationAccount/>}/>
             </Route>
           </Route>
 
