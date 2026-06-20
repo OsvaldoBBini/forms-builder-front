@@ -20,6 +20,7 @@ export function useSignIn() {
   const navigate = useNavigate();
 
   const signIn = useAuth((state) => state.signIn); 
+  const storeUserEmail = useAuth((state) => state.storeUserEmail); 
 
   const { handleSubmit: hookFormSubmit, register, formState: {errors} } = useForm<FormData>({
     resolver: zodResolver(schema)
@@ -30,10 +31,15 @@ export function useSignIn() {
     mutationFn: async (data: SigninParams) => { return authService.signIn(data) }
   });
 
-  const handleSubmit = hookFormSubmit( async (data) => {
+  const handleSubmit = hookFormSubmit(
+    async (data) => {
     await mutateAsync(data)
-      .then(({accessToken, refreshToken}) => { signIn(accessToken, refreshToken) })
+      .then(({accessToken, refreshToken}) => { 
+        storeUserEmail(data.email);
+        signIn(accessToken, refreshToken) })
       .catch((err) => {
+        storeUserEmail(data.email);
+          
         if (err.response?.status === 401) {
           return toast.error("E-mail ou senha incorretos", { position: "bottom-center" })
         }
