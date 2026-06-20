@@ -3,10 +3,10 @@ import { useMutation } from '@tanstack/react-query';
 import { authService } from "@/app/services/authServices";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner"
 import { type SignUpParams } from "@/app/services/authServices/signUp";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { retriveToast } from "@/utils/toaster";
 
 const schema = z.object({
   fullName: z.string().min(2, 'Informe seu nome completo'),
@@ -34,6 +34,7 @@ export function useSignUp() {
 
   const navigate = useNavigate();
   const storeUserId = useAuth((state) => state.storeUserId); 
+  const storeUserEmail = useAuth((state) => state.storeUserEmail); 
 
   const { handleSubmit: hookFormSubmit, register, formState: {errors} } = useForm<FormData>({
     resolver: zodResolver(schema)
@@ -48,10 +49,11 @@ export function useSignUp() {
     await mutateAsync(data)
       .then(({ userId }) => {   
         storeUserId(userId);
+        storeUserEmail(data.email);
         navigate("/account-confirmation") 
       })
       .catch(() => {
-        toast.error("Credenciais inválidas", { position: "bottom-center" })
+        return retriveToast({toastType: "error", toastMessage: "Credenciais inválidas"})
       })
   });
 

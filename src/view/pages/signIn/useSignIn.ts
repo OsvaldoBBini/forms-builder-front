@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { SigninParams } from "@/app/services/authServices/signIn";
 import { useAuth } from "@/app/hooks/useAuth";
-import { toast } from "sonner"
 import { useNavigate } from 'react-router-dom';
+import { retriveToast } from '@/utils/toaster';
 
 const schema = z.object({
   email: z.email('Informe seu e-mail válido'),
@@ -21,9 +21,13 @@ export function useSignIn() {
 
   const signIn = useAuth((state) => state.signIn); 
   const storeUserEmail = useAuth((state) => state.storeUserEmail); 
+  const userEmail = useAuth((state) => state.userEmail); 
 
   const { handleSubmit: hookFormSubmit, register, formState: {errors} } = useForm<FormData>({
-    resolver: zodResolver(schema)
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: userEmail ? userEmail : ""
+    }
   });
 
   const { mutateAsync, isPending } = useMutation({
@@ -41,16 +45,16 @@ export function useSignIn() {
         storeUserEmail(data.email);
           
         if (err.response?.status === 401) {
-          return toast.error("E-mail ou senha incorretos", { position: "bottom-center" })
+          return retriveToast({toastType: "error", toastMessage: "E-mail ou senha incorretos"})
         }
         
         if (err.response?.status === 403) {
           navigate("/account-confirmation")
-          return toast.error("Validação de conta necessária para acesso", { position: "bottom-center" })
+          return retriveToast({ toastType: "error", toastMessage: "Validação de conta necessária para acesso" })
         }
-
+        
         if (err.response?.status === 404) {
-          return toast.error("Usuário não encontrado", { position: "bottom-center" })
+          return retriveToast({ toastType: "error", toastMessage: "Usuário não encontrado" })
         }
       })
   });

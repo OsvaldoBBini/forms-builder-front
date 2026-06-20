@@ -1,9 +1,3 @@
-import { useAuth } from "@/app/hooks/useAuth";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from '@tanstack/react-query';
-import type { AccountConfirmationParams } from "@/app/services/authServices/accountConfirmation";
-import { authService } from "@/app/services/authServices";
 import { Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button"
 import {
@@ -23,56 +17,13 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
-import z from "zod";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useConfirmationAccount } from "./useConfirmationAccount";
+import { RefreshCwIcon } from "lucide-react";
 
-const schema = z.object({
-  confirmationCode: z.string().min(6, 'Código invalido'),
-});
-
-type FormData = z.infer<typeof schema>;
 
 export function ConfirmationAccount() {
-  const navigate = useNavigate();
-  const userEmail = useAuth((state) => state.userEmail);
-  
-  const { handleSubmit: hookFormSubmit, control, formState: {errors} } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      confirmationCode: ""
-    }
-  });
-
-  const { mutateAsync, isPending } = useMutation({
-    mutationKey: ["AccountConfirmation"],
-    mutationFn: async (data: AccountConfirmationParams) => {
-      if (userEmail) 
-      return authService.accountConfirmation({ confirmationCode: data.confirmationCode, email: userEmail }) 
-    }
-  });
-
-  const handleSubmit = hookFormSubmit(
-    async (data) => {
-    if (userEmail)
-    await mutateAsync({ confirmationCode: data.confirmationCode, email: userEmail })
-      .then(() => navigate("/signin"))
-      .catch((err) => {
-        if (err.response?.status === 401) {
-          return toast.error("E-mail ou senha incorretos", { position: "bottom-center" })
-        }
-        
-        if (err.response?.status === 403) {
-          navigate("/account-confirmation")
-          return toast.error("Validação de conta necessária para acesso", { position: "bottom-center" })
-        }
-
-        if (err.response?.status === 404) {
-          return toast.error("Usuário não encontrado", { position: "bottom-center" })
-        }
-      })
-  });
+  const { handleSubmit, control, errors, isPending, isPendingResend, retriveNewConfirmationCode } = useConfirmationAccount();
 
   return (
     <form onSubmit={handleSubmit}>
@@ -88,8 +39,17 @@ export function ConfirmationAccount() {
             <Field>
               <div className="flex items-center justify-between">
                 <FieldLabel htmlFor="otp-verification">
-                  Código de confirmação
+                  Código de verificação
                 </FieldLabel>
+                <Button 
+                  disabled={isPendingResend} 
+                  variant="outline" 
+                  size="xs" 
+                  onClick={retriveNewConfirmationCode}>
+                  {isPendingResend && <Spinner data-icon="inline-start"/>}
+                  {!isPendingResend && <RefreshCwIcon />}
+                  Reenviar código
+                </Button>
               </div>
 
               <div className="flex w-full justify-center">
