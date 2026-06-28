@@ -57,7 +57,10 @@ export function useConfirmationAccount() {
     async (data) => {
     if (userEmail)
     await mutateAsync({ confirmationCode: data.confirmationCode, email: userEmail })
-      .then(() => navigate("/signin"))
+      .then(() => {
+        navigate("/signin")
+        return retriveToast({ toastType: "success", toastMessage: "Sua conta foi validada com sucesso!!" })
+      })
       .catch((err) => {
         if (err.response?.status === 411) {
           return retriveToast({toastType: "error", toastMessage: "O código informado está expirado"})
@@ -66,6 +69,8 @@ export function useConfirmationAccount() {
         if (err.response?.status === 404) {
           return retriveToast({toastType: "error", toastMessage: "O código informado é inválido"})
         }
+
+        return retriveToast({ toastType: "error", toastMessage: "Algo de errado ocorreu, tente novamente mais tarde" })
       })
   });
 

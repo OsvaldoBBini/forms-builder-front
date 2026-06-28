@@ -51,6 +51,7 @@ export function useSignUp() {
         storeUserId(userId);
         storeUserEmail(data.email);
         navigate("/account-confirmation") 
+        return retriveToast({ toastType: "success", toastMessage: "Um código de validação foi enviado a seu e-mail" })
       })
       .catch(() => {
         return retriveToast({toastType: "error", toastMessage: "Credenciais inválidas"})

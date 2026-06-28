@@ -56,6 +56,8 @@ export function useSignIn() {
         if (err.response?.status === 404) {
           return retriveToast({ toastType: "error", toastMessage: "Usuário não encontrado" })
         }
+
+        return retriveToast({ toastType: "error", toastMessage: "Algo de errado ocorreu, tente novamente mais tarde" })
       })
   });
 
