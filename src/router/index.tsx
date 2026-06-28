@@ -6,6 +6,8 @@ import { SignIn } from '@/view/pages/signIn'
 import { SignUp } from '@/view/pages/signUp'
 import { AnimatePresence } from "motion/react"
 import { ConfirmationAccount } from '@/view/pages/confirmationAccount'
+import { ForgotPassword } from '@/view/pages/forgotPassword'
+import { NewPassword } from '@/view/pages/newPassword'
 
 export function Router() {
 
@@ -18,6 +20,8 @@ export function Router() {
               <Route path="/signin" element={<SignIn/>}/>
               <Route path="/signup" element={<SignUp/>}/>
               <Route path="/account-confirmation" element={<ConfirmationAccount/>}/>
+              <Route path="/forgot-password" element={<ForgotPassword/>}/>
+              <Route path="/new-password/:email/:code" element={<NewPassword/>}/>
             </Route>
           </Route>
 

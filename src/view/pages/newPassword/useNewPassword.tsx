@@ -1,16 +1,13 @@
 import z from "zod";
 import { useMutation } from '@tanstack/react-query';
-import { authService } from "@/app/services/authServices";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type SignUpParams } from "@/app/services/authServices/signUp";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { retriveToast } from "@/utils/toaster";
+import { useParams } from "react-router-dom";
 
 const schema = z.object({
-  fullName: z.string().min(2, 'Informe seu nome completo'),
-  email: z.email('Informe um e-mail válido'),
   password: z.string()
     .min(8, {message: 'A senha deve conter pelo menos 8 caracteres.'})
     .max(20, {message: 'A senha deve conter no máximo 20 caracteres.'})
@@ -26,14 +23,22 @@ const schema = z.object({
       /(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])/, 
       { message: 'A senha deve conter pelo menos um caractere especial.' }
     ),
-});
+    confirmPassword: z.string(),
+  }).refine(data => data.password === data.confirmPassword, {
+    message: "As senhas não são iguais!",
+    path: ["confirmPassword"],
+  }
+)
 
 type FormData = z.infer<typeof schema>
 
-export function useSignUp() {
+export function useNewPassword() {
 
-  const navigate = useNavigate();
-  const storeUserId = useAuth((state) => state.storeUserId); 
+  const { email, code } = useParams();
+
+  console.log(email, code)
+
+  const navigate = useNavigate(); 
   const storeUserEmail = useAuth((state) => state.storeUserEmail); 
 
   const { handleSubmit: hookFormSubmit, register, formState: {errors} } = useForm<FormData>({
@@ -41,20 +46,19 @@ export function useSignUp() {
   });
 
   const { mutateAsync, isPending } = useMutation({
-    mutationKey: ["signUp"],
-    mutationFn: async (data: SignUpParams) => { return authService.signUp(data) }
+    mutationKey: ["newPassword"],
+    mutationFn: async () => { return }
   });
 
-  const handleSubmit = hookFormSubmit( async (data) => {
-    await mutateAsync(data)
-      .then(({ userId }) => {   
-        storeUserId(userId);
-        storeUserEmail(data.email);
-        navigate("/account-confirmation") 
+  const handleSubmit = hookFormSubmit( async () => {
+    await mutateAsync()
+      .then(() => {   
+        // storeUserEmail(data.email);
+        navigate("/signin") 
       })
-      .catch(() => {
-        return retriveToast({toastType: "error", toastMessage: "Credenciais inválidas"})
-      })
+      // .catch(() => {
+      //   return retriveToast({toastType: "error", toastMessage: "Credenciais inválidas"})
+      // })
   });
 
   return {

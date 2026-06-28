@@ -9,8 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { retriveToast } from '@/utils/toaster';
 
 const schema = z.object({
-  email: z.email('Informe seu e-mail válido'),
-  password: z.string().min(8, 'Informe a sua senha')
+  email: z.email('E-mail válido'),
+  password: z.string().min(8, 'Senha inválida')
 })
 
 type FormData = z.infer<typeof schema>
