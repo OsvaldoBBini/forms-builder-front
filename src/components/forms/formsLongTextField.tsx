@@ -1,31 +1,20 @@
 import { Field, FieldLabel } from "../ui/field";
 import { Textarea } from "@/components/ui/textarea"
-import { Input } from "../ui/input";
 
-interface IFormsTextArea {
+interface IFormsLongTextField {
   questionNumber: string;
   label: string;
-  size: "small" | "large"
 }
 
-export function FormsTextField({ questionNumber ,label, size }: IFormsTextArea) {
+export function FormsLongTextField({ questionNumber ,label }: IFormsLongTextField) {
   return(
     <Field>
       <FieldLabel>
         {questionNumber}. {label}
       </FieldLabel>
-      {
-        size === "small" &&
-        <Input
-          required
-        />
-      }
-      {
-        size === "large" &&
         <Textarea
           className="resize-none"
         />
-      }
     </Field>
   )
 }

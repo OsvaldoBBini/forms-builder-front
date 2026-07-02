@@ -7,25 +7,25 @@ import {
 } from "@/components/ui/field"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
-interface IFormsRadioSelection {
+interface IFormsMultipleChoiceField {
   questionNumber: string;
   label: string;
-  descriptions?: string;
-  options: { label: string, value: string }[]
+  description?: string;
+  options: { value: string }[]
 }
 
-export function FormsRadioSelection({ questionNumber, label, descriptions, options}: IFormsRadioSelection) {
+export function FormsMultipleChoiceField({ questionNumber, label, description, options}: IFormsMultipleChoiceField) {
   return (
     <FieldSet className="w-full max-w-xs">
       <FieldLegend variant="label">{ questionNumber }. { label }</FieldLegend>
-      { descriptions && <FieldDescription>{ descriptions }</FieldDescription>}
+      { description && <FieldDescription>{ description }</FieldDescription> }
       <RadioGroup defaultValue="monthly">
         {
           options.map(( option ) => 
-            <Field orientation="horizontal">
+            <Field orientation="horizontal" key={crypto.randomUUID()}>
               <RadioGroupItem value={ option.value }/>
               <FieldLabel className="font-normal">
-                { option.label }
+                { option.value }
               </FieldLabel>
             </Field>
           )

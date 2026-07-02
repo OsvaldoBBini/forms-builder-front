@@ -8,6 +8,8 @@ import { AnimatePresence } from "motion/react"
 import { ConfirmationAccount } from '@/view/pages/confirmationAccount'
 import { ForgotPassword } from '@/view/pages/forgotPassword'
 import { NewPassword } from '@/view/pages/newPassword'
+import { BuilderLayout } from '@/view/layouts/BuilderLayout'
+import { Builder } from '@/view/pages/builder'
 
 export function Router() {
 
@@ -27,6 +29,11 @@ export function Router() {
 
         <Route element={<AuthGuard isPrivate/>}>
           <Route path='/' element={<Home/>}/>
+
+          <Route element={<BuilderLayout/>}>
+            <Route path='/builder' element={<Builder/>}/>
+          </Route>
+
         </Route>
         
         </Routes>
