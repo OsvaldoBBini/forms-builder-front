@@ -1,15 +1,13 @@
 import { useFields } from "@/app/hooks/useFields";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { OptionsMenu } from "./components/optionsMenu";
-import { TextFieldModal } from "./components/textFieldModal";
+import { TextFieldModal } from "./components/textFieldCard";
 
 export function Builder() {
 
   const { retrieveField } = useFields();
 
   // const forms = [
-  //   { questionNumber: "1", fieldType: "shortAnswer", label: "Qual é seu nome?" },
-  //   { questionNumber: "2", fieldType: "longAnswer", label: "Descreva seu histórico profissional" },
   //   { questionNumber: "3", 
   //     fieldType: "radioSelection", 
   //     label: "Selecione sua idade:", 
@@ -21,26 +19,45 @@ export function Builder() {
   //     ]
   //   },
   // ]
-
+   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [fields, setFields] = useState<any[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fieldToBuild, setFieldToBuild] = useState<string | null>(null);
 
+  const questionNumber = useMemo(() => (fields.length + 1).toString(), [fields.length]);
+   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAddField = (field: any) => {
-    setFields([...fields, {...field, questionNumber: (fields.length + 1).toString()}]);
-    setIsModalOpen(false);
+    setFields([...fields, {...field, questionNumber: questionNumber}]);
   };
+
+  const handleMenuSelection = useCallback((fieldType: string | null) => {
+    setFieldToBuild(fieldType);
+  }, []);
 
   return (
     <div className="flex flex-col gap-8 w-full max-w-4xl p-4">
 
       <div className="flex justify-between items-center w-full max-w-4xl">
         <h1>Builder</h1>
-        <OptionsMenu onOpenModal={() => setIsModalOpen(true)} />
+        <OptionsMenu onMenuSelection={handleMenuSelection} />
       </div>
 
-      <TextFieldModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAddField={handleAddField}/>
+      { fieldToBuild === "shortAnswer" && 
+        <TextFieldModal 
+        fieldType={fieldToBuild}
+        questionNumber={questionNumber} 
+        onAddField={handleAddField} 
+        onMenuSelection={handleMenuSelection}
+        /> }
+
+      { fieldToBuild === "longAnswer" && 
+        <TextFieldModal 
+        fieldType={fieldToBuild}
+        questionNumber={questionNumber} 
+        onAddField={handleAddField} 
+        onMenuSelection={handleMenuSelection}
+        /> }
 
       <div className="flex flex-col gap-4">  
         {
@@ -50,45 +67,6 @@ export function Builder() {
           })
         }
       </div> 
-
-      {/* <FormsTextField 
-        questionNumber="1" 
-        label="Qual o seu nome?" 
-        size="small"/>
-
-      <FormsTextField 
-        questionNumber="2" 
-        label="Qual o seu nome?" 
-        size="large"/>
-
-      <FormsRadioSelection 
-        questionNumber="3"
-        label="Selecionar"
-        options={[
-          {value: "selecao1"},
-          {value: "selecao2"},
-        ]}
-      />
-
-      <FormsCheckbox
-        questionNumber="4"
-        label="Selecionar"
-        options={[
-          {value: "selecao1"},
-          {value: "selecao2"},
-        ]}
-      />
-
-      <FormsSelectField 
-        questionNumber="5" 
-        label="Selecao"
-        description="Selecione uma opção"
-        defaultValue="opcao1"
-        options={[
-          {value: "opcao1"},
-          {value: "opcao2"},
-        ]}
-      /> */}
 
     </div>
   );

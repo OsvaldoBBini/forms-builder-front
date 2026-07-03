@@ -8,13 +8,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { CirclePlus } from "lucide-react"
+import { 
+  CirclePlus,  
+  SquareCheck, 
+  TextAlignJustify, 
+  CircleCheck,
+  ListIndentIncrease,
+  TextAlignStart} from "lucide-react"
 
 interface IOptionsMenu {
-  onOpenModal: () => void;
+  onMenuSelection: (fieldType: string) => void;
 }
 
-export function OptionsMenu({ onOpenModal }: IOptionsMenu) {
+
+export function OptionsMenu({ onMenuSelection }: IOptionsMenu) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -25,15 +32,29 @@ export function OptionsMenu({ onOpenModal }: IOptionsMenu) {
       <DropdownMenuContent align="start"  className="w-full">
         <DropdownMenuGroup>
           <DropdownMenuLabel>Campos de texto</DropdownMenuLabel>
-          <DropdownMenuItem onClick={onOpenModal}>Resposta Curta</DropdownMenuItem>
-          <DropdownMenuItem>Resposta Longa</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onMenuSelection("shortAnswer")}>
+            <TextAlignStart/>
+            Resposta Curta</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onMenuSelection("longAnswer")}>
+            <TextAlignJustify/>
+            Resposta Longa
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuLabel>Campos de seleção</DropdownMenuLabel>
-          <DropdownMenuItem>Multipla Escolha</DropdownMenuItem>
-          <DropdownMenuItem>Checkbox</DropdownMenuItem>
-          <DropdownMenuItem>Dropdown</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onMenuSelection("multipleChoice")}>
+            <CircleCheck/>
+            Multipla Escolha
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onMenuSelection("checkbox")}>
+            <SquareCheck/>
+            Checkbox
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onMenuSelection("dropdown")}>
+            <ListIndentIncrease/>
+            Dropdown
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
