@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Router } from "./router"
 import { Toaster } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,8 +15,10 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
+        <TooltipProvider>
+          <Router />
+          <Toaster />
+        </TooltipProvider>
     </QueryClientProvider>
   )
 }
