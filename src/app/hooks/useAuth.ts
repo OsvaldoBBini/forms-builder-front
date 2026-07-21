@@ -42,7 +42,8 @@ export const useAuth = create<IAuthState>()(
           userEmail: null, 
           accessToken: null, 
           refreshToken: null, 
-          isAuthenticated: false 
+          isAuthenticated: false,
+          userId: null
         })
       }
 

@@ -33,6 +33,7 @@ let failedRequestsQueue: ((token: string) => void)[] = [];
 const logOut = (error: any) => {
   const { signOut } = useAuth.getState();
   signOut();
+  window.location.href = '/signin'
   return Promise.reject(error)
 };
 
@@ -44,11 +45,11 @@ httpClient.interceptors.response.use(
     const responseStatus = error.response?.status;
     const { refreshToken, updateAccessToken } = useAuth.getState();
 
-    if (originalRequest.url?.includes("/refresh")) logOut(error);
+    if (originalRequest.url?.includes("/refresh")) return logOut(error);
 
     if (responseStatus === 401 && originalRequest) {
 
-      if (!refreshToken) logOut(error);
+      if (!refreshToken) return logOut(error);
 
       if (isRefreshing) {
         return new Promise((resolve) => {
