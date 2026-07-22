@@ -7,10 +7,11 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { CompanySwitcher } from './components/companySwitcher';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { companyServices } from '@/app/services/companyServices';
 import { useQuery } from '@tanstack/react-query';
 import { profileServices } from '@/app/services/profileServices';
+import { CompanyDialog } from './components/companyDialog';
+import { useMemo } from 'react';
 
 export function BuilderLayout() {
 
@@ -27,10 +28,13 @@ export function BuilderLayout() {
     queryFn: getUserInfo,
   });
 
-  console.log({data, isLoading: isLoadingCompanies && isLoadingUserInfo});
+  const modalShouldOpen = useMemo(() => companies?.length === 0, [companies]);
+
+  console.log({data, isLoading: isLoadingCompanies && isLoadingUserInfo})
 
   return (
     <div className="overflow-x-hidden">
+
       <SidebarProvider>
         <Sidebar collapsible="icon">
           <SidebarHeader>
@@ -48,12 +52,12 @@ export function BuilderLayout() {
         </SidebarInset>
       </SidebarProvider>
 
-      <Dialog open={true}>
-        <DialogContent className="sm:max-w-sm">
-          <h1>teste</h1>
-        </DialogContent>
-      </Dialog>
+      <CompanyDialog 
+        open={modalShouldOpen} 
+        title='Cadastre sua empresa' 
+        description='Para avançar é necessário cadastrar a sua primeira empresa.'
+      />
+      
     </div>
-
   );
 }
