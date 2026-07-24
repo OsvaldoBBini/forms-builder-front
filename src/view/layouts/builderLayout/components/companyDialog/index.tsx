@@ -15,6 +15,11 @@ import z from "zod"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { XCircleIcon } from "lucide-react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import type { CreateCompanyParams } from "@/app/services/companyServices/createCompany"
+import { companyServices } from "@/app/services/companyServices"
+import { retriveToast } from "@/utils/toaster"
+import { Spinner } from "@/components/ui/spinner"
 
 interface CompanyDialogInterface {
   title: string;
@@ -43,17 +48,39 @@ export function CompanyDialog({
   onDialogStatus
 }: CompanyDialogInterface) {
 
+  const queryClient = useQueryClient();
+  
   const { 
     handleSubmit: hookFormSubmit, register, control, formState: { errors } 
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { companyName: "", isDefault: false }
+    defaultValues: { companyName: "", isDefault: true }
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const { mutateAsync, isPending } = useMutation({
+    mutationKey: ["createCompany"],
+    mutationFn: async (data: CreateCompanyParams) => { return companyServices.createCompany({ ...data }) }
+  });
+
+  const handleSubmit = hookFormSubmit(async (data: FormData) => {
+    await mutateAsync(data).then(async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['getCompanies'],
+      });
+
+      return retriveToast({
+        toastType: "success",
+        toastMessage: "Empresa cadastrada com sucesso"
+      }) 
+    }
+    ).catch(() => {
+      return retriveToast({
+        toastType: "error",
+        toastMessage: "Erro ao cadastrar sua empresa. Tente novamento mais tarde"
+      })
+    })
     if (onDialogStatus) onDialogStatus(false);
-  };
+  });
 
   const handleClose = () => {
     if (onDialogStatus) onDialogStatus(false) 
@@ -61,8 +88,8 @@ export function CompanyDialog({
 
   return (
     <Dialog open={open}>
-      <DialogContent className="min-w-sm" showCloseButton={canClose}>
-        <form onSubmit={hookFormSubmit(onSubmit)} className="space-y-4">
+      <DialogContent className="min-w-sm">
+        <form onSubmit={handleSubmit} className="space-y-4">
           
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
@@ -125,7 +152,10 @@ export function CompanyDialog({
 
             <DialogFooter className="mt-4">
               {canClose && <Button onClick={handleClose} variant="outline">Cancelar</Button>}
-              <Button type="submit">Cadastrar</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending && <Spinner data-icon="inline-start"/>}
+                Cadastrar
+              </Button>
             </DialogFooter>
           </FieldGroup>
         </form>

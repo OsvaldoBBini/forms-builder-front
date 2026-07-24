@@ -15,8 +15,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 import type { ICompany } from "@/app/services/companyServices/getCompanies"
+import { CompanyDialog } from "../companyDialog"
 
 
 interface CompanySwitcher {
@@ -27,14 +28,28 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
 
   const { isMobile } = useSidebar()
 
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  
+  // global state
+  // const [defaultCompany, setDefaultCompany] = useState(() => {
+  //   const isTheDefaultCompany = companies?.filter((companie) => companie.isDefault)[0];
+  //   if (isTheDefaultCompany) return isTheDefaultCompany;
+  // })
+
+  // const handleDefaultCompany = (company: ICompany) => setDefaultCompany(company);
+
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = useCallback(
+    (status: boolean) => setModalOpen(status), 
+  [setModalOpen])
+
   const defaultCompany: ICompany | undefined = useMemo(() => {
     const isTheDefaultCompany = companies?.filter((companie) => companie.isDefault)[0];
     if (isTheDefaultCompany) return isTheDefaultCompany;
-  }, [companies])
-
-  console.log({companies}, companies?.length === 0)
+  }, [companies]);
 
   return (
+      <>
       <SidebarMenu>
         <SidebarMenuItem>
           <DropdownMenu>
@@ -72,6 +87,7 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
                 <DropdownMenuItem
                   key={company.companyName}
                   className="gap-2 p-2"
+                  // onClick={() => handleDefaultCompany(company)}
                 >
                   <div className="flex size-6 items-center justify-center rounded-md border">
                     <Building2 className="size-3.5 shrink-0" />
@@ -85,15 +101,26 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem className="gap-2 p-2">
+              <DropdownMenuItem className="gap-2 p-2" onClick={handleModalOpen}>
                 <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                   <Plus className="size-4" />
                 </div>
                 <div className="font-medium text-muted-foreground">Adicionar empresa</div>
               </DropdownMenuItem>
+
             </DropdownMenuContent>
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
+
+      <CompanyDialog
+        title="Adição de empresa"
+        description="Adicione uma nova empresa"
+        canSetDefault
+        canClose
+        open={isModalOpen}
+        onDialogStatus={handleModalClose}
+      />
+      </>
   )
 }
