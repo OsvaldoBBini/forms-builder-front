@@ -114,8 +114,8 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
       </SidebarMenu>
 
       <CompanyDialog
-        title="Adição de empresa"
-        description="Adicione uma nova empresa"
+        title="Nova empresa"
+        description="Insira o nome da empresa para cadastrá-la no sistema."
         canSetDefault
         canClose
         open={isModalOpen}

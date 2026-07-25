@@ -10,6 +10,7 @@ import { ForgotPassword } from '@/view/pages/forgotPassword'
 import { NewPassword } from '@/view/pages/newPassword'
 import { BuilderLayout } from '@/view/layouts/builderLayout'
 import { Builder } from '@/view/pages/builder'
+import { Customers } from '@/view/pages/customers'
 
 export function Router() {
 
@@ -29,7 +30,8 @@ export function Router() {
 
           <Route element={<BuilderLayout/>}>
             <Route path='/' element={<Home/>}/>
-            <Route path='/builder' element={<Builder/>}/>
+            <Route path='/customers' element={<Customers/>}/>
+            <Route path='/forms-manager' element={<Builder/>}/>
           </Route>
         
         </Routes>

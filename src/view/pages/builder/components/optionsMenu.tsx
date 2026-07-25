@@ -29,7 +29,7 @@ export function OptionsMenu({ onMenuSelection }: IOptionsMenu) {
           <CirclePlus/>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start"  className="w-full">
+      <DropdownMenuContent align="end" className="w-full">
         <DropdownMenuGroup>
           <DropdownMenuLabel>Campos de texto</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => onMenuSelection("shortAnswer")}>

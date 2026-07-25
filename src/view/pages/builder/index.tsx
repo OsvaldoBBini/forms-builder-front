@@ -6,20 +6,6 @@ import { TextFieldModal } from "./components/textFieldCard";
 export function Builder() {
 
   const { retrieveField } = useFields();
-
-  // const forms = [
-  //   { questionNumber: "3", 
-  //     fieldType: "radioSelection", 
-  //     label: "Selecione sua idade:", 
-  //     options: [
-  //       { value: "18-25" },
-  //       { value: "26-35" },
-  //       { value: "36-45" },
-  //       { value: "46+" }
-  //     ]
-  //   },
-  // ]
-   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [fields, setFields] = useState<any[]>([]);
   const [fieldToBuild, setFieldToBuild] = useState<string | null>(null);
@@ -36,8 +22,7 @@ export function Builder() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-4xl p-4">
-
+    <div>
       <div className="flex justify-between items-center w-full max-w-4xl">
         <h1>Builder</h1>
         <OptionsMenu onMenuSelection={handleMenuSelection} />

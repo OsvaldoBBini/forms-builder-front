@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import z from "zod"
@@ -88,7 +88,7 @@ export function CompanyDialog({
 
   return (
     <Dialog open={open}>
-      <DialogContent className="min-w-sm">
+      <DialogContent showCloseButton={false} className="min-w-sm">
         <form onSubmit={handleSubmit} className="space-y-4">
           
           <DialogHeader>
@@ -120,10 +120,10 @@ export function CompanyDialog({
             {canSetDefault && (
               <>
                 <FieldSeparator className="w-full" />
-                <FieldSet>
-                  <FieldLegend>Definir como empresa padrão</FieldLegend>
+                <FieldSet className="gap-4">
+                  <FieldTitle>Definir como padrão</FieldTitle>
                   <FieldDescription>
-                    A empresa será definida como padrão. Essa configuração poderá ser alterada posteriormente.
+                    Esta empresa será selecionada por padrão ao iniciar o sistema. Você poderá alterar essa configuração posteriormente
                   </FieldDescription>
                   <FieldGroup>
                     <Field orientation="horizontal">
