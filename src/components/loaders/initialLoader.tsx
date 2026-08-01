@@ -7,7 +7,11 @@ import {
 } from "@/components/ui/empty"
 import { Spinner } from "@/components/ui/spinner"
 
-export function InitialLoader() {
+interface InitialLoaderProps {
+  customText?: string;
+}
+
+export function InitialLoader({ customText }: InitialLoaderProps) {
   return (
     <Empty className="w-full">
       <EmptyHeader>
@@ -16,7 +20,10 @@ export function InitialLoader() {
         </EmptyMedia>
         <EmptyTitle>Carreagando...</EmptyTitle>
         <EmptyDescription>
-          Estamos carregando as suas informações.
+          {
+            customText ??
+            "Estamos carregando as suas informações."
+          }
         </EmptyDescription>
       </EmptyHeader>
     </Empty>

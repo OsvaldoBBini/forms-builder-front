@@ -45,6 +45,10 @@ httpClient.interceptors.response.use(
     const responseStatus = error.response?.status;
     const { refreshToken, updateAccessToken } = useAuth.getState();
 
+    if (originalRequest?.skipAuth) {
+      return Promise.reject(error);
+    }
+
     if (originalRequest.url?.includes("/refresh")) return logOut(error);
 
     if (responseStatus === 401 && originalRequest) {

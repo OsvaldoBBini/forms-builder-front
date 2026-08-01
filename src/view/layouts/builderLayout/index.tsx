@@ -72,13 +72,13 @@ export function BuilderLayout() {
                       <SidebarMenuItem>
                         <SidebarMenuButton onClick={() => navigateToPage('/customers')}>
                           <BookUser />
-                          <span>Customers</span>
+                          <span>Clientes</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
                         <SidebarMenuButton onClick={() => navigateToPage('/forms-manager')}>
                           <Form />
-                          <span>Forms builder</span>
+                          <span>Gerenciar formulários</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     </SidebarMenu>
