@@ -18,6 +18,7 @@ import {
 import { useCallback, useMemo, useState } from "react"
 import type { ICompany } from "@/app/services/companyServices/getCompanies"
 import { CompanyDialog } from "../companyDialog"
+import { useCompany } from "@/app/hooks/useCompany"
 
 
 interface CompanySwitcher {
@@ -27,16 +28,9 @@ interface CompanySwitcher {
 export function CompanySwitcher({ companies }: CompanySwitcher) {
 
   const { isMobile } = useSidebar()
+  const setCompanyId = useCompany((state) => state.setCompanyId);
 
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-  
-  // global state
-  // const [defaultCompany, setDefaultCompany] = useState(() => {
-  //   const isTheDefaultCompany = companies?.filter((companie) => companie.isDefault)[0];
-  //   if (isTheDefaultCompany) return isTheDefaultCompany;
-  // })
-
-  // const handleDefaultCompany = (company: ICompany) => setDefaultCompany(company);
 
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = useCallback(
@@ -45,8 +39,11 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
 
   const defaultCompany: ICompany | undefined = useMemo(() => {
     const isTheDefaultCompany = companies?.filter((companie) => companie.isDefault)[0];
-    if (isTheDefaultCompany) return isTheDefaultCompany;
-  }, [companies]);
+    if (isTheDefaultCompany) {
+      setCompanyId(isTheDefaultCompany.companyId);
+      return isTheDefaultCompany;
+    }
+  }, [companies, setCompanyId]);
 
   return (
       <>

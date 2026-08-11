@@ -89,16 +89,19 @@ export function BuilderLayout() {
                 { userData && <UserSession userData={userData}/> }
               </SidebarFooter>
             </Sidebar>
-            <SidebarInset>
-              <div className='p-1'>
-                <SidebarTrigger/>
-              </div>  
-              <div className="w-full flex justify-center">
-                <div className='w-[90%]'>
-                  <Outlet/>
-                </div>
-              </div>
-            </SidebarInset>
+              { 
+                companies && companies.length > 0 && 
+                <SidebarInset>
+                  <div className='p-1'>
+                    <SidebarTrigger/>
+                  </div>  
+                  <div className="w-full flex justify-center">
+                    <div className='w-[90%]'>
+                      <Outlet/>
+                    </div>
+                  </div>
+                </SidebarInset>
+              }
           </SidebarProvider>
 
           <CompanyDialog 

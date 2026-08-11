@@ -11,7 +11,7 @@ export interface ICompany {
 interface CompaniesResponse { data: { items: ICompany[] } }
 
 export async function getCompanies() {
-  const { data: response } = await httpClient.get<CompaniesResponse>('/companies');
+  const { data: response } = await httpClient.get<CompaniesResponse>('/companies', {skipAuth: false});
   const { data } = response;
   return data.items
 }

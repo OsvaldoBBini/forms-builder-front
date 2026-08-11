@@ -4,26 +4,22 @@ import { useCallback, useState } from "react";
 import { InitialLoader } from "@/components/loaders/initialLoader";
 import { Button } from "@/components/ui/button";
 import { CustomersTable } from "./components/customersTable";
+import { getCustomers } from "@/app/services/customersServices/getCustomers";
+import { useQuery } from "@tanstack/react-query";
+import { useCompany } from "@/app/hooks/useCompany";
 
-export interface ICustomer {
-  email: string;
-  phoneNumber: string;
-  fullName: string;
-  cpf: string;
-}
 
 export function Customers () {
 
+  const companyId = useCompany((state) => state.companyId);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  // const customers: ICustomer[] | null = null;
-  const customers: ICustomer[] | null = [{
-    email: "osvaldobbini@gmail.com",
-    phoneNumber: "55984632951",
-    fullName: "Osvaldo Bini",
-    cpf: "05078886001"
-  }];
 
-  const isLoading = false;
+  const { data: customersData, isLoading: isLoadingCustomersInfo } = useQuery({
+    queryKey: ['getCustomers', companyId],
+    queryFn: () => getCustomers(companyId as string),
+  });
+
+  const isLoading = isLoadingCustomersInfo;
 
   const handleModalStatus = useCallback(
     () => setIsOpen(prevState => !prevState), 
@@ -35,13 +31,13 @@ export function Customers () {
     <>
     <header className="flex justify-between items-center pb-1">
       <h1>Clientes</h1>
-      { customers && <Button>Cadastrar cliente</Button>}
+      { customersData && <Button>Cadastrar cliente</Button>}
     </header>
     <Separator/>
     <section className="pt-1">
       { isLoading && <InitialLoader customText="Estamos carregando seus clientes"/>}
-      { !customers && !isLoading && <EmptyCustomers onOpenModal={handleModalStatus}/>}
-      { customers && !isLoading && <CustomersTable customers={customers} /> }
+      { customersData?.length === 0 && !isLoading && <EmptyCustomers onOpenModal={handleModalStatus}/>}
+      { customersData && customersData?.length > 0 && !isLoading && <CustomersTable customers={customersData} /> }
     </section>
     </>
   )
