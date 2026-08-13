@@ -1,4 +1,4 @@
-import type { ICustomer } from ".."
+import type { ICustomer } from "@/app/services/customersServices/getCustomers"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -18,10 +18,11 @@ import {
 import { MoreHorizontalIcon } from "lucide-react"
 
 interface CustomersTableProps {
-  customers: ICustomer[]
+  customers: ICustomer[],
+  handleSelectedCustomer: (customer: ICustomer) => void
 }
 
-export function CustomersTable({ customers }: CustomersTableProps) {
+export function CustomersTable({ customers, handleSelectedCustomer }: CustomersTableProps) {
   return (
     <div className="rounded-md border">
       <Table>
@@ -29,7 +30,7 @@ export function CustomersTable({ customers }: CustomersTableProps) {
           <TableRow>
             <TableHead>Nome</TableHead>
             <TableHead>Cpf</TableHead>
-            <TableHead>Número</TableHead>
+            <TableHead>Telefone</TableHead>
             <TableHead>E-mail</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
@@ -49,7 +50,9 @@ export function CustomersTable({ customers }: CustomersTableProps) {
                     <span className="sr-only">Abrir Menu</span></Button>
                   </DropdownMenuTrigger> 
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Editar</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleSelectedCustomer(customer)}>
+                      Editar
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Detalhes</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem variant="destructive">

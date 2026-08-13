@@ -15,10 +15,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useState } from "react"
 import type { ICompany } from "@/app/services/companyServices/getCompanies"
 import { CompanyDialog } from "../companyDialog"
 import { useCompany } from "@/app/hooks/useCompany"
+import { useShallow } from 'zustand/react/shallow'
 
 
 interface CompanySwitcher {
@@ -27,23 +28,32 @@ interface CompanySwitcher {
 
 export function CompanySwitcher({ companies }: CompanySwitcher) {
 
-  const { isMobile } = useSidebar()
-  const setCompanyId = useCompany((state) => state.setCompanyId);
-
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const { isMobile } = useSidebar()
 
-  const handleModalOpen = () => setModalOpen(true);
-  const handleModalClose = useCallback(
-    (status: boolean) => setModalOpen(status), 
-  [setModalOpen])
+  const { setCompanyId } = useCompany(
+    useShallow((state) => ({
+      setCompanyId: state.setCompanyId,
+    })
+  ));
 
-  const defaultCompany: ICompany | undefined = useMemo(() => {
+  const [defaultCompany, setDefaultCompany] = useState<ICompany | undefined>(() => {
     const isTheDefaultCompany = companies?.filter((companie) => companie.isDefault)[0];
     if (isTheDefaultCompany) {
       setCompanyId(isTheDefaultCompany.companyId);
       return isTheDefaultCompany;
     }
-  }, [companies, setCompanyId]);
+  });
+
+  const handleChangeCompany = (company: ICompany) => {
+    setCompanyId(company.companyId);
+    setDefaultCompany(company);
+  }
+
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = useCallback(
+    (status: boolean) => setModalOpen(status), 
+  [setModalOpen])
 
   return (
       <>
@@ -83,8 +93,8 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
               { companies && companies.map((company: ICompany) => (
                 <DropdownMenuItem
                   key={company.companyName}
+                  onClick={() => handleChangeCompany(company)}
                   className="gap-2 p-2"
-                  // onClick={() => handleDefaultCompany(company)}
                 >
                   <div className="flex size-6 items-center justify-center rounded-md border">
                     <Building2 className="size-3.5 shrink-0" />

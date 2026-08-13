@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSeparator, FieldSet, FieldTitle } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import z from "zod"
@@ -151,7 +151,11 @@ export function CompanyDialog({
             )}
 
             <DialogFooter className="mt-4">
-              {canClose && <Button onClick={handleClose} variant="outline">Cancelar</Button>}
+              {canClose && <Button onClick={(e) => {
+                e.preventDefault();
+                handleClose()
+              }} 
+              variant="outline">Cancelar</Button>}
               <Button type="submit" disabled={isPending}>
                 {isPending && <Spinner data-icon="inline-start"/>}
                 Cadastrar
