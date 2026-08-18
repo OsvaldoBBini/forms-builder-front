@@ -2,7 +2,6 @@ import { Separator } from "@/components/ui/separator";
 import { EmptyCustomers } from "./components/emptyCustomers";
 import { useCallback, useState } from "react";
 import { InitialLoader } from "@/components/loaders/initialLoader";
-import { Button } from "@/components/ui/button";
 import { CustomersTable } from "./components/customersTable";
 import { getCustomers, type ICustomer } from "@/app/services/customersServices/getCustomers";
 import { useQuery } from "@tanstack/react-query";
@@ -46,11 +45,6 @@ export function Customers () {
     <>
     <header className="flex justify-between items-center pb-1">
       <h1>Clientes</h1>
-      { customersData && customersData?.length > 0 && 
-        <Button onClick={handleModalStatus}>
-          Cadastrar cliente
-        </Button>
-      }
     </header>
     <Separator/>
     <section className="pt-1">
@@ -59,11 +53,11 @@ export function Customers () {
       { 
         customersData && customersData?.length > 0 && !isLoading && 
         <CustomersTable 
+          handleModalStatus={handleModalStatus}
           handleSelectedCustomer={handleSelectedCustomer} 
           customers={customersData} 
         /> 
       }
-
       <CustomersDialog
         companyId={companyId as string}
         open={isOpen}
@@ -71,7 +65,6 @@ export function Customers () {
         onDialogStatus={handleModalStatus}
         onEmptyCustomer={handleCleanSelectedCustomer}
       />
-
     </section>
     </>
   )
