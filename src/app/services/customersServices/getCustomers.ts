@@ -2,6 +2,7 @@ import { httpClient } from "../httpClient";
 
 export interface ICustomer {
   companyId: string;
+  customerId: string;
   email?: string;
   fullName: string;
   cpf: string;

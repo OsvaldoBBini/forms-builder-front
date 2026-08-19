@@ -10,17 +10,10 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldGroup} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import z from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { XCircleIcon } from "lucide-react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { retriveToast } from "@/utils/toaster"
 import { Spinner } from "@/components/ui/spinner"
-import type { INewCustomer } from "@/app/services/customersServices/createCustomers"
-import { customersServices } from "@/app/services/customersServices"
 import type { ICustomer } from "@/app/services/customersServices/getCustomers"
-import { useEffect } from "react"
+import { useCustomersDialog } from "./useCustomersDialog"
 
 interface CompanyDialogInterface {
   companyId: string;
@@ -28,24 +21,6 @@ interface CompanyDialogInterface {
   open: boolean;
   onDialogStatus: () => void;
   onEmptyCustomer: () => void;
-}
-
-const schema = z.object({
-  fullName: z.string()
-    .min(1, 'O nome completo deve ter pelo menos uma letra')
-    .max(100, 'O nome completo deve ter no máximo 100 letras'),
-  email: z.email('Formato de email inválido').optional(),
-  cpf: z.string().regex(/^\d{3}\.?\d{3}\.?\d{3}\-?\d{2}$/, 'Formato de CPF inválido'),
-  phoneNumber: z.string().regex(/^(?:\(?([1-9]{2})\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))$/, 'Formato de número de telefone inválido')
-})
-
-type FormData = z.infer<typeof schema>
-
-const defaultValues = {
-  fullName: "",
-  email: "",
-  cpf: "",
-  phoneNumber: ""
 }
 
 export function CustomersDialog({ 
@@ -56,56 +31,12 @@ export function CustomersDialog({
   onEmptyCustomer
 }: CompanyDialogInterface) {
 
-  const queryClient = useQueryClient();
-  
-  const { 
-    handleSubmit: hookFormSubmit, register, reset, formState: { errors } 
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: defaultValues
-  });
-
-  useEffect(() => {
-    reset({
-      fullName: customer?.fullName ?? "",
-      email: customer?.email ?? "",
-      cpf: customer?.cpf ?? "",
-      phoneNumber: customer?.phoneNumber ?? ""
-    })
-  }, [customer, reset])
-
-  const { mutateAsync, isPending } = useMutation({
-    mutationKey: ["createCustomer"],
-    mutationFn: async (data: INewCustomer) => { return customersServices.createCustomers(companyId, { ...data }) }
-  });
-
-  const handleSubmit = hookFormSubmit(async (data: FormData) => {
-    await mutateAsync(data).then(async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['getCustomers'],
-      });
-
-      return retriveToast({
-        toastType: "success",
-        toastMessage: "Cliente cadastrado com sucesso"
-      }) 
-    }
-    ).catch(() => {
-      return retriveToast({
-        toastType: "error",
-        toastMessage: "Erro ao cadastrar seu cliente. Tente novamente mais tarde"
-      })
-    })
-    reset(defaultValues)
-    onDialogStatus();
-    onEmptyCustomer();
-  });
-
-  const handleClose = () => {
-    reset(defaultValues)
-    onDialogStatus() 
-    onEmptyCustomer()
-  };
+  const { handleSubmit, register, errors, handleClose, isPending } = useCustomersDialog({
+    companyId,
+    customer,
+    onDialogStatus,
+    onEmptyCustomer
+  })
 
   return (
     <Dialog open={open}>
