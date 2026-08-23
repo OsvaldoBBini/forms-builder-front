@@ -20,7 +20,7 @@ const schema = z.object({
   fullName: z.string()
     .min(1, 'O nome completo deve ter pelo menos uma letra')
     .max(100, 'O nome completo deve ter no máximo 100 letras'),
-  email: z.email('Formato de email inválido').optional(),
+  email: z.email('Formato de email inválido').or(z.literal('')),
   cpf: z.string().regex(/^\d{3}\.?\d{3}\.?\d{3}\-?\d{2}$/, 'Formato de CPF inválido'),
   phoneNumber: z.string().regex(/^(?:\(?([1-9]{2})\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))$/, 'Formato de número de telefone inválido')
 })
@@ -79,7 +79,7 @@ export function useCustomersDialog({
           toastMessage: "Cliente atualizado com sucesso"
         }) 
       }
-
+      
       await createCustomer(data);
       await queryClient.invalidateQueries({queryKey: ['getCustomers']});
       return retriveToast({
