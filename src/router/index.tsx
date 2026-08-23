@@ -8,7 +8,7 @@ import { AnimatePresence } from "motion/react"
 import { ConfirmationAccount } from '@/view/pages/confirmationAccount'
 import { ForgotPassword } from '@/view/pages/forgotPassword'
 import { NewPassword } from '@/view/pages/newPassword'
-import { BuilderLayout } from '@/view/layouts/builderLayout'
+import { AppLayout } from '@/view/layouts/AppLayout'
 import { Builder } from '@/view/pages/builder'
 import { Customers } from '@/view/pages/customers'
 
@@ -28,7 +28,7 @@ export function Router() {
             </Route>
           </Route>
 
-          <Route element={<BuilderLayout/>}>
+          <Route element={<AppLayout/>}>
             <Route path='/' element={<Home/>}/>
             <Route path='/customers' element={<Customers/>}/>
             <Route path='/forms-manager' element={<Builder/>}/>

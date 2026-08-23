@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider } from "@/components/ui/sidebar"
 import {
   Sidebar,
@@ -7,47 +7,22 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { CompanySwitcher } from './components/companySwitcher';
-import { companyServices } from '@/app/services/companyServices';
-import { useQuery } from '@tanstack/react-query';
-import { profileServices } from '@/app/services/profileServices';
 import { CompanyDialog } from './components/companyDialog';
-import { useCallback, useEffect, useState } from 'react';
 import { UserSession } from './components/userSession';
 import { InitialLoader } from '@/components/loaders/initialLoader';
 import { BookUser, Form } from 'lucide-react';
+import { useAppLayout } from './useAppLayout';
 
-export function BuilderLayout() {
+export function AppLayout() {
 
-  const { getCompanies } = companyServices;
-  const { getUserInfo } = profileServices;
-  const navigate = useNavigate();
-  
-  const { data: companies, isLoading: isLoadingCompanies } = useQuery({
-    queryKey: ['getCompanies'],
-    queryFn: getCompanies,
-  });
-
- const [modalShouldOpen, setModalShouldOpen] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setModalShouldOpen(!isLoadingCompanies && companies?.length === 0);
-  }, [companies, isLoadingCompanies]);
-
-  const navigateToPage = (address: string) => {
-    navigate(address);
-  }
-
-  const handleModalShouldOpen = useCallback(
-    (state: boolean) => setModalShouldOpen(state), 
-  [setModalShouldOpen])
-
-  const { data: userData, isLoading: isLoadingUserInfo } = useQuery({
-    queryKey: ['getUserInfo'],
-    queryFn: getUserInfo,
-  });
-
-  const isLoading = isLoadingCompanies && isLoadingUserInfo;
+  const {
+    modalShouldOpen,
+    navigateToPage,
+    handleModalShouldOpen,
+    userData,
+    isLoading,
+    companies,
+  } = useAppLayout();
 
   return (
     <div className="overflow-x-hidden">

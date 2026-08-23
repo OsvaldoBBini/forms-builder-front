@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import type { ICompany } from "@/app/services/companyServices/getCompanies"
 import { CompanyDialog } from "../companyDialog"
 import { useCompany } from "@/app/hooks/useCompany"
@@ -44,6 +44,19 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
       return isTheDefaultCompany;
     }
   });
+
+  useEffect(() => {
+  const selectedCompany =
+    companies?.find((company) => company.companyId === defaultCompany?.companyId) ??
+    companies?.find((company) => company.isDefault) ??
+    companies?.[0]
+
+  if (selectedCompany) {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDefaultCompany(selectedCompany)
+    setCompanyId(selectedCompany.companyId)
+  }
+}, [companies, defaultCompany?.companyId, setCompanyId])
 
   const handleChangeCompany = (company: ICompany) => {
     setCompanyId(company.companyId);

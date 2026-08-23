@@ -34,6 +34,7 @@ const schema = z.object({
   companyName: z.string()
     .min(1, 'O nome da empresa deve ter pelo menos uma letra')
     .max(30, 'O nome da empresa deve ter no máximo 30 letras'),
+  cnpj: z.string().regex(/^\d{14}$/, { message: 'Cnpj deve conter 14 dígitos.' }),
   isDefault: z.boolean()
 })
 
@@ -54,7 +55,7 @@ export function CompanyDialog({
     handleSubmit: hookFormSubmit, register, control, formState: { errors } 
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { companyName: "", isDefault: true }
+    defaultValues: { companyName: "", cnpj: "", isDefault: true }
   });
 
   const { mutateAsync, isPending } = useMutation({
@@ -113,6 +114,24 @@ export function CompanyDialog({
                 <FieldError className="text-red-600 flex items-center gap-x-1"> 
                   <XCircleIcon size={10}/>
                   {errors.companyName?.message}
+                </FieldError>
+              )}
+            </Field>
+
+            <Field data-invalid={!!errors.cnpj}>
+              <Label 
+                htmlFor="cnpj">
+                  Cnpj
+              </Label>
+              <Input 
+                id="cnpj" 
+                {...register("cnpj")} 
+                aria-invalid={!!errors.cnpj} 
+              />
+              {errors.cnpj?.message && (
+                <FieldError className="text-red-600 flex items-center gap-x-1"> 
+                  <XCircleIcon size={10}/>
+                  {errors.cnpj?.message}
                 </FieldError>
               )}
             </Field>

@@ -7,11 +7,11 @@ interface IFormsShortTextField {
   label: string;
 }
 
-export function FormsShortTextField({ questionNumber ,label, description }: IFormsShortTextField) {
+export function FormsShortTextField({ label, description }: IFormsShortTextField) {
   return(
     <Field>
       <FieldLabel>
-        {questionNumber}. {label}
+        {label}
       </FieldLabel>
       {description && (
         <FieldDescription>

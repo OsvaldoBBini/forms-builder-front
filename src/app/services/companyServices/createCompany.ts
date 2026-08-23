@@ -2,11 +2,13 @@ import { httpClient } from "../httpClient";
 
 export interface CreateCompanyParams {
   companyName: string;
+  cnpj: string;
   isDefault: boolean
 }
 
 export interface CreateCompanyResponse {
-  companyId: string 
+  companyId: string
+  cnpj: string; 
   userId: string;
   companyName: string;
   role: 'owner' | 'admin' | 'user';
