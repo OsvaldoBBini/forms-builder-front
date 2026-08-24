@@ -65,22 +65,22 @@ export function CompanyDialog({
 
   const handleSubmit = hookFormSubmit(async (data: FormData) => {
     await mutateAsync(data).then(async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['getCompanies'],
-      });
-
+      
       return retriveToast({
         toastType: "success",
         toastMessage: "Empresa cadastrada com sucesso"
       }) 
     }
-    ).catch(() => {
-      return retriveToast({
-        toastType: "error",
-        toastMessage: "Erro ao cadastrar sua empresa. Tente novamento mais tarde"
-      })
+  ).catch(() => {
+    return retriveToast({
+      toastType: "error",
+      toastMessage: "Erro ao cadastrar sua empresa. Tente novamento mais tarde"
     })
-    if (onDialogStatus) onDialogStatus(false);
+  }).finally(
+    async () => {
+      if (onDialogStatus) onDialogStatus(false);
+      await queryClient.invalidateQueries({ queryKey: ['getCompanies'] });
+    })
   });
 
   const handleClose = () => {

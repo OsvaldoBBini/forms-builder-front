@@ -73,7 +73,6 @@ export function useCustomersDialog({
     try {
       if (customer) {
         await updateCustomer({ ...data, customerId: customer.customerId });
-        await queryClient.invalidateQueries({queryKey: ['getCustomers']});
         return retriveToast({
           toastType: "success",
           toastMessage: "Cliente atualizado com sucesso"
@@ -81,7 +80,6 @@ export function useCustomersDialog({
       }
       
       await createCustomer(data);
-      await queryClient.invalidateQueries({queryKey: ['getCustomers']});
       return retriveToast({
         toastType: "success",
         toastMessage: "Cliente cadastrado com sucesso"
@@ -96,6 +94,7 @@ export function useCustomersDialog({
       reset(defaultValues)
       onDialogStatus();
       onEmptyCustomer();
+      await queryClient.invalidateQueries({queryKey: ['getCustomers']});
     }
   });
 
