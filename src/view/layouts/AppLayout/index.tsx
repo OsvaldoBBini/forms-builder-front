@@ -53,7 +53,7 @@ export function AppLayout() {
                       <SidebarMenuItem>
                         <SidebarMenuButton onClick={() => navigateToPage('/forms-manager')}>
                           <Form />
-                          <span>Gerenciar formulários</span>
+                          <span>Formulários</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     </SidebarMenu>

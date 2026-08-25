@@ -9,8 +9,8 @@ import { ConfirmationAccount } from '@/view/pages/confirmationAccount'
 import { ForgotPassword } from '@/view/pages/forgotPassword'
 import { NewPassword } from '@/view/pages/newPassword'
 import { AppLayout } from '@/view/layouts/AppLayout'
-import { Builder } from '@/view/pages/builder'
 import { Customers } from '@/view/pages/customers'
+import { FormsManager } from '@/view/pages/formsManager'
 
 export function Router() {
 
@@ -31,7 +31,7 @@ export function Router() {
           <Route element={<AppLayout/>}>
             <Route path='/' element={<Home/>}/>
             <Route path='/customers' element={<Customers/>}/>
-            <Route path='/forms-manager' element={<Builder/>}/>
+            <Route path='/forms-manager' element={<FormsManager/>}/>
           </Route>
         
         </Routes>

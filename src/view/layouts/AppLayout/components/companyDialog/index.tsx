@@ -20,6 +20,7 @@ import type { CreateCompanyParams } from "@/app/services/companyServices/createC
 import { companyServices } from "@/app/services/companyServices"
 import { retriveToast } from "@/utils/toaster"
 import { Spinner } from "@/components/ui/spinner"
+import { Separator } from "@/components/ui/separator"
 
 interface CompanyDialogInterface {
   title: string;
@@ -169,7 +170,8 @@ export function CompanyDialog({
               </>
             )}
 
-            <DialogFooter className="mt-4">
+            <Separator/>
+            <DialogFooter>
               {canClose && <Button onClick={(e) => {
                 e.preventDefault();
                 handleClose()

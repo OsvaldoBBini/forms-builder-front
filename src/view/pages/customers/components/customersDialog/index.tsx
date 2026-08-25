@@ -14,6 +14,7 @@ import { XCircleIcon } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 import type { ICustomer } from "@/app/services/customersServices/getCustomers"
 import { useCustomersDialog } from "./useCustomersDialog"
+import { Separator } from "@/components/ui/separator"
 
 interface CompanyDialogInterface {
   companyId: string;
@@ -125,8 +126,9 @@ export function CustomersDialog({
                 </FieldError>
               )}
             </Field>
-
-            <DialogFooter className="mt-4">
+            
+            <Separator/>
+            <DialogFooter>
               <Button onClick={(e) => {
                 e.preventDefault();
                 handleClose()

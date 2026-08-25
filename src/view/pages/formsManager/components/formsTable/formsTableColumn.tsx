@@ -1,6 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table"
 import type { DataTableFeatures } from "@/components/ui/data-table-features"
-import type { ICustomer } from "@/app/services/customersServices/getCustomers"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -12,36 +11,38 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-const customersColumnsHelper = createColumnHelper<DataTableFeatures, ICustomer>()
+export interface IForms {
+  formId: string;
+  formsName: string;
+  lastUpdate: string;
+  createdAt: string;
+}
+
+const customersColumnsHelper = createColumnHelper<DataTableFeatures, IForms>()
 
 export const columns = customersColumnsHelper.columns([
-  customersColumnsHelper.accessor("fullName", {
+  customersColumnsHelper.accessor("formsName", {
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Nome
+          Nome do formulário
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
   }),
-  customersColumnsHelper.accessor("email", {
-    header: "E-mail",
+  customersColumnsHelper.accessor("createdAt", {
+    header: "Criado em",
   }),
-  customersColumnsHelper.accessor("cpf", {
-    header: "Cpf",
-  }),
-  customersColumnsHelper.accessor("phoneNumber", {
-    header: "Telefone",
+  customersColumnsHelper.accessor("lastUpdate", {
+    header: "Última atualização",
   }),
   customersColumnsHelper.display({
     id: "actions",
-    cell: ({ row, table }) => {
-      const customer = row.original
- 
+    cell: () => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -51,14 +52,13 @@ export const columns = customersColumnsHelper.columns([
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => table.options.meta?.onEditCustomer(customer)}>
+            <DropdownMenuItem onClick={() => console.log}>
               Editar
             </DropdownMenuItem>
-            <DropdownMenuItem>Detalhes</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem 
               className="text-destructive"
-              onClick={() => table.options.meta?.onDeleteCustomer(customer)}
+              onClick={() => console.log} // soft delete
             >
               Deletar
             </DropdownMenuItem>
