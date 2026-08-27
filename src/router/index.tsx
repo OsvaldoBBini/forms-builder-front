@@ -11,6 +11,7 @@ import { NewPassword } from '@/view/pages/newPassword'
 import { AppLayout } from '@/view/layouts/AppLayout'
 import { Customers } from '@/view/pages/customers'
 import { FormsManager } from '@/view/pages/formsManager'
+import { Builder } from '@/view/pages/builder'
 
 export function Router() {
 
@@ -32,6 +33,7 @@ export function Router() {
             <Route path='/' element={<Home/>}/>
             <Route path='/customers' element={<Customers/>}/>
             <Route path='/forms-manager' element={<FormsManager/>}/>
+            <Route path='/forms-manager/builder/:formId' element={<Builder/>}/>
           </Route>
         
         </Routes>

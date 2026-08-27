@@ -8,10 +8,14 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useParams } from "react-router-dom";
 
 export function Builder() {
 
   const { retrieveField } = useFields();
+  
+  const { formId } = useParams<{ formId: string }>();
+  console.log(formId)
 
   const [fields, setFields] = useState<any[]>([]);
   const [selectedField, setSelectedField] = useState<any | null>(null);
@@ -51,14 +55,8 @@ export function Builder() {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center w-full max-w-4xl">
-        <h1>Builder</h1>
-        <OptionsMenu onMenuSelection={handleMenuSelection} />
-      </div>
-
+    <div className="relative min-h-[calc(96dvh-3rem)]">
       <section className="flex flex-col gap-y-4">
-        { factory(fieldToBuild) }
         <div className="flex flex-col gap-y-4">  
           {
             fields.map(( field ) => {
@@ -99,7 +97,13 @@ export function Builder() {
             })
           }
         </div> 
+        { factory(fieldToBuild) }
       </section>
+
+      <footer className="absolute bottom-0 left-1/2 -translate-x-1/2">
+        <OptionsMenu onMenuSelection={handleMenuSelection} />
+      </footer>
+    
     </div>
   );
 }

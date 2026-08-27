@@ -1,62 +1,70 @@
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { 
   CirclePlus,  
   SquareCheck, 
   TextAlignJustify, 
   CircleCheck,
   ListIndentIncrease,
-  TextAlignStart} from "lucide-react"
+  TextAlignStart,
+  Save} from "lucide-react"
+import { 
+  Menubar, 
+  MenubarContent, 
+  MenubarGroup, 
+  MenubarItem, 
+  MenubarMenu, 
+  MenubarSeparator, 
+  MenubarTrigger 
+} from "@/components/ui/menubar";
 
 interface IOptionsMenu {
   onMenuSelection: (fieldType: string) => void;
 }
 
-
 export function OptionsMenu({ onMenuSelection }: IOptionsMenu) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost">
+    <Menubar className="py-5">
+      
+      <MenubarMenu>
+        <MenubarTrigger className="flex gap-2" onClick={() => console.log("save")}>
+          <Save />
+          Salvar
+        </MenubarTrigger>
+      </MenubarMenu>
+
+      <MenubarMenu>
+        <MenubarTrigger className="flex gap-2">
           <CirclePlus/>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-full">
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Campos de texto</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => onMenuSelection("shortAnswer")}>
-            <TextAlignStart/>
-            Resposta Curta</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onMenuSelection("longAnswer")}>
-            <TextAlignJustify/>
-            Resposta Longa
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Campos de seleção</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => onMenuSelection("multipleChoice")}>
-            <CircleCheck/>
-            Multipla Escolha
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onMenuSelection("checkbox")}>
-            <SquareCheck/>
-            Checkbox
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onMenuSelection("dropdown")}>
-            <ListIndentIncrease/>
-            Dropdown
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          Adicionar Campo
+        </MenubarTrigger>
+        <MenubarContent align="center" className="w-full">
+          <MenubarGroup>
+            <MenubarItem onClick={() => onMenuSelection("shortAnswer")}>
+              <TextAlignStart/>
+              Resposta Curta
+            </MenubarItem>
+            <MenubarItem onClick={() => onMenuSelection("longAnswer")}>
+              <TextAlignJustify/>
+              Resposta Longa
+            </MenubarItem>
+          </MenubarGroup>
+          <MenubarSeparator />
+          <MenubarGroup>
+            <MenubarItem onClick={() => onMenuSelection("multipleChoice")}>
+              <CircleCheck/>
+              Multipla Escolha
+            </MenubarItem>
+            <MenubarItem onClick={() => onMenuSelection("checkbox")}>
+              <SquareCheck/>
+              Checkbox
+            </MenubarItem>
+            <MenubarItem onClick={() => onMenuSelection("dropdown")}>
+              <ListIndentIncrease/>
+              Dropdown
+            </MenubarItem>
+          </MenubarGroup>
+        </MenubarContent>
+      </MenubarMenu>
+      
+    </Menubar>
   )
 }
