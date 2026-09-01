@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import z from "zod"
 import { useEffect } from "react"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const schema = z.object({
   label: z.string().min(1, 'Texto inválido'),
@@ -15,37 +16,39 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-interface ITextFieldModal {
+interface IFieldCard {
+  selectedField: { label: string; description?: string; fieldType: string, fieldId: string } | null;
+  fieldTypes: { value: string, label: string }[];
   onCancel: () => void;
-  values: { label: string; description?: string; fieldType: string, fieldId: string } | null;
   fieldType: string;
   onMenuSelection: (fieldType: string | null) => void;
   onAddField: (field: { label: string; description?: string; fieldType: string, fieldId: string }) => void;
 }
 
-export function TextFieldModal(
+export function FieldCard(
   { 
+    fieldTypes,
     fieldType, 
     onAddField, 
     onMenuSelection,
-    values,
+    selectedField,
     onCancel
-  }: ITextFieldModal) {
+  }: IFieldCard) {
 
   const { handleSubmit: hookFormSubmit, register, reset } = useForm<FormData>({
       resolver: zodResolver(schema),
       defaultValues: {
-        label: values?.label ?? "",
-        description: values?.description ?? "",
+        label: selectedField?.label ?? "",
+        description: selectedField?.description ?? "",
       },
     });
 
   useEffect(() => {
     reset({
-      label: values?.label ?? "",
-      description: values?.description ?? "",
+      label: selectedField?.label ?? "",
+      description: selectedField?.description ?? "",
     });
-  }, [values, reset]);
+  }, [selectedField, reset]);
 
   const handleSubmit = hookFormSubmit(
     (data) => { 
@@ -79,20 +82,39 @@ export function TextFieldModal(
           </CardDescription>
         </CardHeader>
         <Separator className="w-full mt-4" />
-        <CardFooter className="flex justify-end gap-2">
-          <Button type="submit" size="sm" form="text-field-form">
-            Adicionar Campo
-          </Button>
-          <Button 
-            size="sm" 
-            variant="outline" 
-            onClick={() => {
-              onMenuSelection(null);
-              onCancel()
-            }
-          }>
-            Cancelar
-          </Button>
+        <CardFooter className={`flex  ${ selectedField ? "justify-between" : "justify-end" }`}>
+
+          {selectedField && 
+            <Select defaultValue={fieldType} onValueChange={() => console.log}>
+              <SelectTrigger>
+                <SelectValue/>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Tipos</SelectLabel>
+                  {fieldTypes.map((item, index) => (
+                    <SelectItem key={index} value={item.value}>{item.label}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          }
+
+          <div className="flex gap-2">
+            <Button type="submit" size="sm" form="text-field-form">
+              { !selectedField ? "Adicionar": "Atualizar" }
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={() => {
+                onMenuSelection(null);
+                onCancel()
+              }
+            }>
+              Cancelar
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </form>

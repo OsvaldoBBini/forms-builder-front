@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFields } from "@/app/hooks/useFields";
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useState } from "react";
 import { OptionsMenu } from "./components/optionsMenu";
-import { TextFieldModal } from "./components/textFieldCard";
+import { FieldCard } from "./components/fieldCard";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,11 @@ import { Pencil, Trash } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useParams } from "react-router-dom";
 
+
 export function Builder() {
 
   const { retrieveField } = useFields();
+  const fieldTypes = [{value: "shortAnswer", label: "Resposta curta"},{value: "longAnswer", label: "Resposta longa"}]
   
   const { formId } = useParams<{ formId: string }>();
   console.log(formId)
@@ -31,28 +33,19 @@ export function Builder() {
 
   const handleRemoveField = (id: string) => setFields(prevState => prevState.filter(item => item.fieldId !== id));
 
+  // const handleUpdateCard = useCallback((id: string, fieldType: string) => {
+  //   setFields((prevState) => prevState.map((item) =>
+  //     item.fieldId === id ? { ...item, fieldType } : item
+  //   ));
+
+  //   setSelectedField((prevState: any) =>
+  //     prevState && prevState.fieldId === id ? { ...prevState, fieldType } : prevState
+  //   );
+  // }, []);
+
   const handleMenuSelection = useCallback((fieldType: string | null) => {
     setFieldToBuild(fieldType);
   }, []);
-
-  const factory = (fieldToBuild: any): ReactNode => {
-    const buildOptions: any = {
-      shortAnswer: <TextFieldModal 
-        fieldType={fieldToBuild} 
-        values={selectedField}
-        onAddField={handleAddField} 
-        onMenuSelection={handleMenuSelection}
-        onCancel={handleEmptySelection}/>,
-
-      longAnswer: <TextFieldModal 
-        fieldType={fieldToBuild} 
-        values={selectedField}
-        onAddField={handleAddField} 
-        onMenuSelection={handleMenuSelection}
-        onCancel={handleEmptySelection}/>
-    } 
-    return buildOptions[fieldToBuild]
-  }
 
   return (
     <div className="relative min-h-[calc(96dvh-3rem)]">
@@ -60,7 +53,15 @@ export function Builder() {
         <div className="flex flex-col gap-y-4">  
           {
             fields.map(( field ) => {
-              if (selectedField && selectedField.fieldId === field.fieldId) return factory(field.fieldType)
+              if (selectedField && selectedField.fieldId === field.fieldId) 
+                return (<FieldCard 
+                        fieldType={field.fieldType} 
+                        fieldTypes={fieldTypes}
+                        selectedField={selectedField}
+                        onAddField={handleAddField} 
+                        onMenuSelection={handleMenuSelection}
+                        onCancel={handleEmptySelection}/>
+                      )
               else {
                 const FieldComponent = retrieveField(field.fieldType) as React.ElementType;
                 return (
@@ -97,7 +98,15 @@ export function Builder() {
             })
           }
         </div> 
-        { factory(fieldToBuild) }
+        { fieldToBuild && 
+          <FieldCard 
+            fieldType={fieldToBuild} 
+            fieldTypes={fieldTypes}
+            selectedField={null}
+            onAddField={handleAddField} 
+            onMenuSelection={handleMenuSelection}
+            onCancel={handleEmptySelection}/> 
+        }
       </section>
 
       <footer className="absolute bottom-0 left-1/2 -translate-x-1/2">
