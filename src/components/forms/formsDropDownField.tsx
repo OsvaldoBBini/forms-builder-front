@@ -16,25 +16,22 @@ import {
 
 
 interface IFormsDropDownField {
-  questionNumber: string;
   label: string;
   description?: string;
-  options: { value: string }[]
-  defaultValue?: string
+  options: { value: string, index: string }[]
 }
 
 export function FormsDropDownField({ 
-  questionNumber, 
   label, 
   description, 
   options, 
-  defaultValue }: IFormsDropDownField) {
+  }: IFormsDropDownField) {
     
   return (
     <FieldGroup className="w-full max-w-xs">
       <Field orientation="horizontal">
         <FieldContent>
-          <FieldLabel htmlFor="align-item">{ questionNumber }. { label }</FieldLabel>
+          <FieldLabel htmlFor="align-item">{ label }</FieldLabel>
           {description && (
             <FieldDescription>
               {description}
@@ -43,7 +40,7 @@ export function FormsDropDownField({
         </FieldContent>
       </Field>
       <Field>
-        <Select defaultValue={defaultValue}>
+        <Select>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
@@ -52,7 +49,7 @@ export function FormsDropDownField({
           >
             <SelectGroup>
               {options.map((option) => (
-                <SelectItem key={crypto.randomUUID()} value={option.value}>
+                <SelectItem key={option.index} value={option.value}>
                   {option.value}
                 </SelectItem>
               ))}

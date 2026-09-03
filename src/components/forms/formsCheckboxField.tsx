@@ -9,17 +9,16 @@ import {
 } from "@/components/ui/field"
 
 interface IFormsCheckboxField {
-  questionNumber: string;
   label: string;
   description?: string;
-  options: { value: string }[]
+  options: { value: string, index: string }[]
 }
 
-export function FormsCheckboxField({ questionNumber, label, description, options }: IFormsCheckboxField) {
+export function FormsCheckboxField({ label, description, options }: IFormsCheckboxField) {
   return (
     <FieldSet>
       <FieldLegend variant="label">
-        {questionNumber}. {label}
+        {label}
       </FieldLegend>
       {description && (
         <FieldDescription>
@@ -28,7 +27,7 @@ export function FormsCheckboxField({ questionNumber, label, description, options
       )}
       <FieldGroup className="gap-3">
         {options.map((option) => 
-        <Field orientation="horizontal" key={crypto.randomUUID()}>
+        <Field orientation="horizontal" key={option.index}>
           <Checkbox/>
           <FieldLabel
             className="font-normal"

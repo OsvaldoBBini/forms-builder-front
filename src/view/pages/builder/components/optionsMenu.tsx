@@ -49,17 +49,17 @@ export function OptionsMenu({ onMenuSelection }: IOptionsMenu) {
           </MenubarGroup>
           <MenubarSeparator />
           <MenubarGroup>
-            <MenubarItem onClick={() => onMenuSelection("multipleChoice")}>
+            <MenubarItem onClick={() => onMenuSelection("radioSelection")}>
               <CircleCheck/>
-              Multipla Escolha
+              Seleção Única
             </MenubarItem>
             <MenubarItem onClick={() => onMenuSelection("checkbox")}>
               <SquareCheck/>
-              Checkbox
+              Multipla Escolha
             </MenubarItem>
-            <MenubarItem onClick={() => onMenuSelection("dropdown")}>
+            <MenubarItem onClick={() => onMenuSelection("selectField")}>
               <ListIndentIncrease/>
-              Dropdown
+              Lista Suspensa
             </MenubarItem>
           </MenubarGroup>
         </MenubarContent>

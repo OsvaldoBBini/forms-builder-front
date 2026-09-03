@@ -14,10 +14,16 @@ import { useParams } from "react-router-dom";
 export function Builder() {
 
   const { retrieveField } = useFields();
-  const fieldTypes = [{value: "shortAnswer", label: "Resposta curta"},{value: "longAnswer", label: "Resposta longa"}]
-  
+
+  const fieldTypes = [
+    {value: "shortAnswer", label: "Resposta curta"},
+    {value: "longAnswer", label: "Resposta longa"},
+    {value: "radioSelection", label: "Seleção única"},
+    {value: "checkbox", label: "Múltipla escolha"},
+    {value: "selectField", label: "Campo de seleção"}
+  ]
+
   const { formId } = useParams<{ formId: string }>();
-  console.log(formId)
 
   const [fields, setFields] = useState<any[]>([]);
   const [selectedField, setSelectedField] = useState<any | null>(null);
@@ -33,15 +39,15 @@ export function Builder() {
 
   const handleRemoveField = (id: string) => setFields(prevState => prevState.filter(item => item.fieldId !== id));
 
-  // const handleUpdateCard = useCallback((id: string, fieldType: string) => {
-  //   setFields((prevState) => prevState.map((item) =>
-  //     item.fieldId === id ? { ...item, fieldType } : item
-  //   ));
+  const handleUpdate = useCallback((id: string, newFields: any) => {
+    setFields((prevState) => prevState.map((item) =>
+      item.fieldId === id ? { ...item, ...newFields } : item
+    ));
 
-  //   setSelectedField((prevState: any) =>
-  //     prevState && prevState.fieldId === id ? { ...prevState, fieldType } : prevState
-  //   );
-  // }, []);
+    setSelectedField((prevState: any) =>
+      prevState && prevState.fieldId === id ? { ...prevState, ...newFields } : prevState
+    );
+  }, []);
 
   const handleMenuSelection = useCallback((fieldType: string | null) => {
     setFieldToBuild(fieldType);
@@ -54,14 +60,17 @@ export function Builder() {
           {
             fields.map(( field ) => {
               if (selectedField && selectedField.fieldId === field.fieldId) 
-                return (<FieldCard 
-                        fieldType={field.fieldType} 
-                        fieldTypes={fieldTypes}
-                        selectedField={selectedField}
-                        onAddField={handleAddField} 
-                        onMenuSelection={handleMenuSelection}
-                        onCancel={handleEmptySelection}/>
-                      )
+                return (
+                  <FieldCard 
+                    fieldType={field.fieldType} 
+                    fieldTypes={fieldTypes}
+                    selectedField={selectedField}
+                    onAddField={handleAddField} 
+                    onMenuSelection={handleMenuSelection}
+                    onEmptySelection={handleEmptySelection}
+                    onUpdate={handleUpdate}
+                    />
+                );
               else {
                 const FieldComponent = retrieveField(field.fieldType) as React.ElementType;
                 return (
@@ -105,7 +114,9 @@ export function Builder() {
             selectedField={null}
             onAddField={handleAddField} 
             onMenuSelection={handleMenuSelection}
-            onCancel={handleEmptySelection}/> 
+            onEmptySelection={handleEmptySelection}
+            onUpdate={handleUpdate}
+            /> 
         }
       </section>
 
