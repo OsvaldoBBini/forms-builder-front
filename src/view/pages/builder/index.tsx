@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { useFields } from "@/app/hooks/useFields";
 import { useCallback, useState } from "react";
 import { OptionsMenu } from "./components/optionsMenu";
@@ -10,9 +10,23 @@ import { Pencil, Trash } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useParams } from "react-router-dom";
 
+export interface IFieldOption {
+  value: string;
+  index: string;
+  linkedToAnotherQuestion?: {
+    questionId: string;
+  };
+}
+
+export interface IField { 
+  label: string; 
+  description?: string; 
+  fieldType: string, 
+  fieldId: string, 
+  options?: IFieldOption[] 
+}
 
 export function Builder() {
-
   const { retrieveField } = useFields();
 
   const fieldTypes = [
@@ -24,27 +38,26 @@ export function Builder() {
   ]
 
   const { formId } = useParams<{ formId: string }>();
+  console.log("formId", formId);
 
-  const [fields, setFields] = useState<any[]>([]);
-  const [selectedField, setSelectedField] = useState<any | null>(null);
+  const [fields, setFields] = useState<IField[]>([]);
+  const [selectedField, setSelectedField] = useState<IField | null>(null);
   const [fieldToBuild, setFieldToBuild] = useState<string | null>(null);
    
-  const handleAddField = (field: any) => {
+  const handleAddField = (field: IField) => {
     setFields([...fields, field]);
   };
 
-  const handleEditField = (fields: any) => setSelectedField(fields);
-
+  const handleEditField = (fields: IField) => setSelectedField(fields);
   const handleEmptySelection = useCallback(() => setSelectedField(null), []);
-
   const handleRemoveField = (id: string) => setFields(prevState => prevState.filter(item => item.fieldId !== id));
 
-  const handleUpdate = useCallback((id: string, newFields: any) => {
+  const handleUpdate = useCallback((id: string, newFields: Partial<IField>) => {
     setFields((prevState) => prevState.map((item) =>
       item.fieldId === id ? { ...item, ...newFields } : item
     ));
 
-    setSelectedField((prevState: any) =>
+    setSelectedField((prevState: IField | null) =>
       prevState && prevState.fieldId === id ? { ...prevState, ...newFields } : prevState
     );
   }, []);
@@ -54,7 +67,7 @@ export function Builder() {
   }, []);
 
   return (
-    <div className="relative min-h-[calc(96dvh-3rem)]">
+    <div className="relative flex min-h-[calc(96dvh-3rem)] flex-col">
       <section className="flex flex-col gap-y-4">
         <div className="flex flex-col gap-y-4">  
           {
@@ -62,6 +75,7 @@ export function Builder() {
               if (selectedField && selectedField.fieldId === field.fieldId) 
                 return (
                   <FieldCard 
+                    questions={fields}
                     fieldType={field.fieldType} 
                     fieldTypes={fieldTypes}
                     selectedField={selectedField}
@@ -111,6 +125,7 @@ export function Builder() {
           <FieldCard 
             fieldType={fieldToBuild} 
             fieldTypes={fieldTypes}
+            questions={fields}
             selectedField={null}
             onAddField={handleAddField} 
             onMenuSelection={handleMenuSelection}
@@ -120,7 +135,7 @@ export function Builder() {
         }
       </section>
 
-      <footer className="absolute bottom-0 left-1/2 -translate-x-1/2">
+      <footer className="mt-auto flex justify-center py-4">
         <OptionsMenu onMenuSelection={handleMenuSelection} />
       </footer>
     

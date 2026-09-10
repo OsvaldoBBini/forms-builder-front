@@ -8,7 +8,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import z from "zod"
 import { useEffect, useState } from "react"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Circle, Square } from "lucide-react"
+import { Circle, MoreVertical, Square } from "lucide-react"
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import type { IField, IFieldOption } from ".."
 
 const schema = z.object({
   label: z.string().min(1, 'Texto inválido'),
@@ -18,20 +20,21 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 interface IFieldCard {
-  selectedField: { label: string; description?: string; fieldType: string, fieldId: string, options?: { value: string, index: string }[] } | null;
+  selectedField: IField | null;
+  questions: IField[];
   fieldTypes: { value: string, label: string }[];
   onEmptySelection: () => void;
   fieldType: string;
   onMenuSelection: (fieldType: string | null) => void;
-  onAddField: (field: { label: string; description?: string; fieldType: string, fieldId: string, options?: { value: string, index: string }[] }) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onUpdate: (id: string, newFields: any) => void;
+  onAddField: (field: IField) => void;
+  onUpdate: (id: string, newFields: Partial<IField>) => void;
 }
 
 export function FieldCard(
   { 
     fieldTypes,
-    fieldType, 
+    fieldType,
+    questions, 
     onAddField, 
     onMenuSelection,
     selectedField,
@@ -39,7 +42,15 @@ export function FieldCard(
     onUpdate
   }: IFieldCard) {
 
-  const [options, setOptions] = useState<{ value: string, index: string }[]>( selectedField?.options || [{ value: "Opção 1", index: crypto.randomUUID() }]);
+  const [options, setOptions] = useState<IFieldOption[]>(
+    selectedField?.options || [{ value: "Opção 1", index: crypto.randomUUID() }]
+  );
+
+  const [linkedToAnotherQuestion, setLinkedToAnotherQuestion] = useState( selectedField?.options?.some(option => option.linkedToAnotherQuestion) || false);
+
+  const handleToggleLinkedQuestion = () => {
+    setLinkedToAnotherQuestion(prevState => !prevState);
+  }
 
   const handleUpdateOption = (index: string, newValue: string) => {
     setOptions(prevOptions => {
@@ -50,6 +61,14 @@ export function FieldCard(
       }
       return updatedOptions;
     });
+  }
+
+  const handleLinkQuestion = (optionIndex: string, questionId: string) => {
+    setOptions(prevOptions => prevOptions.map(option =>
+      option.index === optionIndex
+        ? { ...option, linkedToAnotherQuestion: { questionId } }
+        : option
+    ));
   }
 
   const handleAddOption = () => {
@@ -120,11 +139,10 @@ export function FieldCard(
         { !["shortAnswer", "longAnswer"].includes(fieldType) &&
           <CardContent className="flex flex-col gap-2">
 
-            {options.map((option: { value: string, index: string }, index: number) => (
-              <>
-                <div className="flex justify-center items-center gap-2" key={option.index}>
-                  { fieldType === "radioSelection" && <Circle className="size-4" />}
-                  { fieldType === "checkbox" && <Square className="size-4" />}
+            {options.map((option, index) => (
+              <div className="flex justify-center items-center gap-2" key={option.index}>
+                  { fieldType === "radioSelection" && <Circle className="size-4 shrink-0" />}
+                  { fieldType === "checkbox" && <Square className="size-4 shrink-0" />}
                   { fieldType === "selectField" && <span>{index + 1}.</span> }
                   
                   <Field >
@@ -135,6 +153,29 @@ export function FieldCard(
                         id={`option-${option.index}`}
                         placeholder="Digite a opção de resposta..." />
                   </Field>
+
+                  { linkedToAnotherQuestion && (
+                    <div className="flex items-center gap-2">
+                      <Select
+                        value={option.linkedToAnotherQuestion?.questionId}
+                        onValueChange={(questionId) => handleLinkQuestion(option.index, questionId)}
+                      >
+                        <SelectTrigger className="w-sm">
+                          <SelectValue placeholder="Habilitar pergunta..." />
+                        </SelectTrigger>
+                        <SelectContent className="w-full">
+                          <SelectGroup>
+                            <SelectLabel>Perguntas</SelectLabel>
+                              {questions.map((item) => (
+                                <SelectItem key={item.fieldId} value={item.fieldId}>
+                                  {item.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                 
                   { options.length > 1 && 
                     <div>
@@ -144,7 +185,6 @@ export function FieldCard(
                     </div>
                   }
                 </div>
-              </>
             ))}
 
             <div className="flex justify-start items-center gap-2">
@@ -191,6 +231,26 @@ export function FieldCard(
             }>
               Cancelar
             </Button>
+
+            {!["shortAnswer", "longAnswer"].includes(fieldType) &&
+              <>
+                <Separator orientation="vertical" />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <MoreVertical />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full" side="bottom" align="end">
+                    <DropdownMenuCheckboxItem 
+                        checked={linkedToAnotherQuestion} 
+                        onCheckedChange={handleToggleLinkedQuestion}>
+                      Ir para pergunta com base na resposta
+                    </DropdownMenuCheckboxItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            }
           </div>
         </CardFooter>
       </Card>
