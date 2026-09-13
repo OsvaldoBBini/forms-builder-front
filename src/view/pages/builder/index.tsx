@@ -136,7 +136,7 @@ export function Builder() {
       </section>
 
       <footer className="mt-auto flex justify-center py-4">
-        <OptionsMenu onMenuSelection={handleMenuSelection} />
+        <OptionsMenu formId={formId} onMenuSelection={handleMenuSelection} />
       </footer>
     
     </div>
