@@ -1,4 +1,3 @@
- 
 import { useFields } from "@/app/hooks/useFields";
 import { useCallback, useState } from "react";
 import { OptionsMenu } from "./components/optionsMenu";
@@ -9,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { retriveToast } from "@/utils/toaster";
 
 export interface IFieldOption {
   value: string;
@@ -26,6 +29,19 @@ export interface IField {
   options?: IFieldOption[] 
 }
 
+const schema = z.object({
+  formName: z.string()
+    .min(1, 'O nome completo deve ter pelo menos uma letra')
+    .max(100, 'O nome completo deve ter no máximo 100 letras'),
+})
+
+type FormData = z.infer<typeof schema>
+
+const defaultValues = {
+  formName: "",
+}
+
+
 export function Builder() {
   const { retrieveField } = useFields();
 
@@ -36,6 +52,19 @@ export function Builder() {
     {value: "checkbox", label: "Múltipla escolha"},
     {value: "selectField", label: "Campo de seleção"}
   ]
+  
+  const { 
+    handleSubmit: hookFormSubmit, register, reset, formState: { errors } 
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: defaultValues
+  });
+  
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+
+  const handleSaveDialogOpen = useCallback(() => {
+    setSaveDialogOpen(prevState => !prevState)
+  }, []);
 
   const { formId } = useParams<{ formId: string }>();
   console.log("formId", formId);
@@ -65,6 +94,33 @@ export function Builder() {
   const handleMenuSelection = useCallback((fieldType: string | null) => {
     setFieldToBuild(fieldType);
   }, []);
+
+  const handleSubmit = hookFormSubmit(async (data: FormData) => {
+      try {
+        
+        const formData = {
+          formId: formId,
+          formName: data.formName,
+          fields: fields
+        }
+
+        const existingForms = localStorage.getItem('forms') ? JSON.parse(localStorage.getItem('forms') || '[]') : [];
+        localStorage.setItem('forms', JSON.stringify([...existingForms, formData]));
+
+        return retriveToast({
+          toastType: "success",
+          toastMessage: "Formulário salvo com sucesso"
+        }) 
+      }
+      catch {
+        return retriveToast({
+          toastType: "error",
+          toastMessage: "Erro ao salvar seu formulário. Tente novamente mais tarde"
+        })
+      } finally {
+        reset(defaultValues)
+      }
+    });
 
   return (
     <div className="relative flex min-h-[calc(96dvh-3rem)] flex-col">
@@ -136,7 +192,14 @@ export function Builder() {
       </section>
 
       <footer className="mt-auto flex justify-center py-4">
-        <OptionsMenu formId={formId} onMenuSelection={handleMenuSelection} />
+        <OptionsMenu 
+          onMenuSelection={handleMenuSelection} 
+          onSaveForm={handleSubmit} 
+          saveDialogOpen={saveDialogOpen} 
+          handleSaveDialogOpen={handleSaveDialogOpen} 
+          register={register}
+          errors={errors}
+        />
       </footer>
     
     </div>
