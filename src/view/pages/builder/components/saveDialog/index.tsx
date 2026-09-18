@@ -30,7 +30,6 @@ export function FormSaveDialog({
   register,
   errors
 }: FormSaveInterface) {
-
   return (
     <Dialog open={open}>
       <DialogContent showCloseButton={false} className="min-w-sm">

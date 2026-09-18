@@ -15,27 +15,16 @@ import {
   MenubarSeparator, 
   MenubarTrigger 
 } from "@/components/ui/menubar";
-import { FormSaveDialog } from "./saveDialog";
-import type { UseFormRegister } from "node_modules/react-hook-form/dist/types/form";
-import type { FieldErrors } from "node_modules/react-hook-form/dist/types/errors";
 
 interface IOptionsMenu {
   onMenuSelection: (fieldType: string) => void;
-  onSaveForm: () => void;
-  saveDialogOpen: boolean;
   handleSaveDialogOpen: () => void;
-  register: UseFormRegister<{ formName: string; }>
-  errors: FieldErrors<{ formName: string; }>
 }
 
 export function OptionsMenu({ 
-  onMenuSelection, 
-  onSaveForm , 
-  saveDialogOpen, 
-  handleSaveDialogOpen,
-  register,
-  errors}: IOptionsMenu) {
-
+  onMenuSelection,
+  handleSaveDialogOpen
+}: IOptionsMenu) {
   return (
     <>
       <Menubar className="py-5">
@@ -79,16 +68,7 @@ export function OptionsMenu({
             </MenubarGroup>
           </MenubarContent>
         </MenubarMenu>
-        
       </Menubar>
-
-      <FormSaveDialog  
-        open={saveDialogOpen} 
-        onDialogStatus={handleSaveDialogOpen}
-        onSaveForm={onSaveForm}
-        register={register}
-        errors={errors}
-      />
     </>
   )
 }

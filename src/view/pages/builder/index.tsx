@@ -1,127 +1,60 @@
-import { useFields } from "@/app/hooks/useFields";
-import { useCallback, useState } from "react";
 import { OptionsMenu } from "./components/optionsMenu";
-import { FieldCard } from "./components/fieldCard";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { retriveToast } from "@/utils/toaster";
-
-export interface IFieldOption {
-  value: string;
-  index: string;
-  linkedToAnotherQuestion?: {
-    questionId: string;
-  };
-}
-
-export interface IField { 
-  label: string; 
-  description?: string; 
-  fieldType: string, 
-  fieldId: string, 
-  options?: IFieldOption[] 
-}
-
-const schema = z.object({
-  formName: z.string()
-    .min(1, 'O nome completo deve ter pelo menos uma letra')
-    .max(100, 'O nome completo deve ter no máximo 100 letras'),
-})
-
-type FormData = z.infer<typeof schema>
-
-const defaultValues = {
-  formName: "",
-}
-
+import { FormSaveDialog } from "./components/saveDialog";
+import { useSaveForm } from "./hooks/useSaveForm";
+import { FieldCard } from "./components/fieldCard";
+import { useCallback } from "react";
+import { useFormBuilder } from "./hooks/useFormBuilder";
 
 export function Builder() {
-  const { retrieveField } = useFields();
+  const {
+      fieldTypes,
+      fields,
+      selectedField,
+      fieldToBuild,
+      saveDialogOpen,
+      handleAddField,
+      handleEditField,
+      handleEmptySelection,
+      handleRemoveField,
+      handleUpdate,
+      handleMenuSelection,
+      handleSaveDialogOpen,
+      retrieveField,
+      formId
+    } = useFormBuilder();
 
-  const fieldTypes = [
-    {value: "shortAnswer", label: "Resposta curta"},
-    {value: "longAnswer", label: "Resposta longa"},
-    {value: "radioSelection", label: "Seleção única"},
-    {value: "checkbox", label: "Múltipla escolha"},
-    {value: "selectField", label: "Campo de seleção"}
-  ]
-  
-  const { 
-    handleSubmit: hookFormSubmit, register, reset, formState: { errors } 
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: defaultValues
-  });
-  
-  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const { register, errors, handleSubmit } = useSaveForm({ formId: formId || "", fields: fields });
 
-  const handleSaveDialogOpen = useCallback(() => {
-    setSaveDialogOpen(prevState => !prevState)
-  }, []);
-
-  const { formId } = useParams<{ formId: string }>();
-  console.log("formId", formId);
-
-  const [fields, setFields] = useState<IField[]>([]);
-  const [selectedField, setSelectedField] = useState<IField | null>(null);
-  const [fieldToBuild, setFieldToBuild] = useState<string | null>(null);
-   
-  const handleAddField = (field: IField) => {
-    setFields([...fields, field]);
-  };
-
-  const handleEditField = (fields: IField) => setSelectedField(fields);
-  const handleEmptySelection = useCallback(() => setSelectedField(null), []);
-  const handleRemoveField = (id: string) => setFields(prevState => prevState.filter(item => item.fieldId !== id));
-
-  const handleUpdate = useCallback((id: string, newFields: Partial<IField>) => {
-    setFields((prevState) => prevState.map((item) =>
-      item.fieldId === id ? { ...item, ...newFields } : item
-    ));
-
-    setSelectedField((prevState: IField | null) =>
-      prevState && prevState.fieldId === id ? { ...prevState, ...newFields } : prevState
-    );
-  }, []);
-
-  const handleMenuSelection = useCallback((fieldType: string | null) => {
-    setFieldToBuild(fieldType);
-  }, []);
-
-  const handleSubmit = hookFormSubmit(async (data: FormData) => {
-      try {
-        
-        const formData = {
-          formId: formId,
-          formName: data.formName,
-          fields: fields
-        }
-
-        const existingForms = localStorage.getItem('forms') ? JSON.parse(localStorage.getItem('forms') || '[]') : [];
-        localStorage.setItem('forms', JSON.stringify([...existingForms, formData]));
-
-        return retriveToast({
-          toastType: "success",
-          toastMessage: "Formulário salvo com sucesso"
-        }) 
-      }
-      catch {
-        return retriveToast({
-          toastType: "error",
-          toastMessage: "Erro ao salvar seu formulário. Tente novamente mais tarde"
-        })
-      } finally {
-        reset(defaultValues)
-      }
-    });
-
+  const renderFieldCard = useCallback((fieldType: string) => {
+    return (
+        <FieldCard 
+          fieldType={fieldType} 
+          fieldTypes={fieldTypes}
+          questions={fields}
+          selectedField={selectedField ? selectedField : null}
+          onAddField={handleAddField} 
+          onMenuSelection={handleMenuSelection}
+          onEmptySelection={handleEmptySelection}
+          onUpdate={handleUpdate}
+        /> 
+      )
+    }, 
+    [
+      fieldTypes, 
+      fields, 
+      selectedField, 
+      handleAddField, 
+      handleMenuSelection, 
+      handleEmptySelection, 
+      handleUpdate
+    ]
+  );
+    
   return (
     <div className="relative flex min-h-[calc(96dvh-3rem)] flex-col">
       <section className="flex flex-col gap-y-4">
@@ -129,18 +62,7 @@ export function Builder() {
           {
             fields.map(( field ) => {
               if (selectedField && selectedField.fieldId === field.fieldId) 
-                return (
-                  <FieldCard 
-                    questions={fields}
-                    fieldType={field.fieldType} 
-                    fieldTypes={fieldTypes}
-                    selectedField={selectedField}
-                    onAddField={handleAddField} 
-                    onMenuSelection={handleMenuSelection}
-                    onEmptySelection={handleEmptySelection}
-                    onUpdate={handleUpdate}
-                    />
-                );
+                return renderFieldCard(field.fieldType);
               else {
                 const FieldComponent = retrieveField(field.fieldType) as React.ElementType;
                 return (
@@ -177,30 +99,23 @@ export function Builder() {
             })
           }
         </div> 
-        { fieldToBuild && 
-          <FieldCard 
-            fieldType={fieldToBuild} 
-            fieldTypes={fieldTypes}
-            questions={fields}
-            selectedField={null}
-            onAddField={handleAddField} 
-            onMenuSelection={handleMenuSelection}
-            onEmptySelection={handleEmptySelection}
-            onUpdate={handleUpdate}
-            /> 
-        }
+        { fieldToBuild && renderFieldCard(fieldToBuild) } 
       </section>
 
       <footer className="mt-auto flex justify-center py-4">
         <OptionsMenu 
           onMenuSelection={handleMenuSelection} 
-          onSaveForm={handleSubmit} 
-          saveDialogOpen={saveDialogOpen} 
           handleSaveDialogOpen={handleSaveDialogOpen} 
-          register={register}
-          errors={errors}
         />
       </footer>
+
+      <FormSaveDialog  
+        open={saveDialogOpen} 
+        onDialogStatus={handleSaveDialogOpen}
+        onSaveForm={handleSubmit}
+        register={register}
+        errors={errors}
+      />
     
     </div>
   );
