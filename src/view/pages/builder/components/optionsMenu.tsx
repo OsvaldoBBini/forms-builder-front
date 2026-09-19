@@ -5,7 +5,8 @@ import {
   CircleCheck,
   ListIndentIncrease,
   TextAlignStart,
-  Save} from "lucide-react"
+  Save,
+  Trash} from "lucide-react"
 import { 
   Menubar, 
   MenubarContent, 
@@ -15,6 +16,7 @@ import {
   MenubarSeparator, 
   MenubarTrigger 
 } from "@/components/ui/menubar";
+import { useNavigate } from "react-router-dom";
 
 interface IOptionsMenu {
   onMenuSelection: (fieldType: string) => void;
@@ -25,8 +27,15 @@ export function OptionsMenu({
   onMenuSelection,
   handleSaveDialogOpen
 }: IOptionsMenu) {
+
+  const navigate = useNavigate();
+
+  const handleCancelFromCreation = () => {
+    navigate('/forms-manager')
+  }
+
   return (
-    <>
+    <div className="flex gap-4">
       <Menubar className="py-5">
         <MenubarMenu>
           <MenubarTrigger className="flex gap-2" onClick={handleSaveDialogOpen}>
@@ -69,6 +78,15 @@ export function OptionsMenu({
           </MenubarContent>
         </MenubarMenu>
       </Menubar>
-    </>
+
+      <Menubar className="py-5">
+        <MenubarMenu>
+          <MenubarTrigger className="flex gap-2" onClick={handleCancelFromCreation}>
+            <Trash />
+            Cancelar
+          </MenubarTrigger>
+        </MenubarMenu>
+      </Menubar>
+    </div>
   )
 }

@@ -70,7 +70,7 @@ export function DataTable<TData extends RowData>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="text-center">
                       {header.isPlaceholder ? null : (
                         <table.FlexRender header={header} />
                       )}
@@ -88,7 +88,7 @@ export function DataTable<TData extends RowData>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="text-center">
                       <table.FlexRender cell={cell} />
                     </TableCell>
                   ))}

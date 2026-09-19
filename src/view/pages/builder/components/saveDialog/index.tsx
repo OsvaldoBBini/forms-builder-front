@@ -14,13 +14,15 @@ import { XCircleIcon } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import type { UseFormRegister } from "node_modules/react-hook-form/dist/types/form"
 import type { FieldErrors } from "node_modules/react-hook-form/dist/types/errors"
+import { Spinner } from "@/components/ui/spinner"
 
 interface FormSaveInterface {
   open: boolean;
   onDialogStatus: () => void;
   onSaveForm: () => void;
-    register: UseFormRegister<{ formName: string; }>
-    errors: FieldErrors<{ formName: string; }>
+  register: UseFormRegister<{ formName: string; }>
+  errors: FieldErrors<{ formName: string; }>
+  isPending: boolean;
 }
 
 export function FormSaveDialog({ 
@@ -28,7 +30,8 @@ export function FormSaveDialog({
   onDialogStatus,
   onSaveForm,
   register,
-  errors
+  errors,
+  isPending
 }: FormSaveInterface) {
   return (
     <Dialog open={open}>
@@ -67,7 +70,7 @@ export function FormSaveDialog({
               }} 
               variant="outline">Cancelar</Button>
               <Button type="submit">
-                {/* {isPending && <Spinner data-icon="inline-start"/>} */}
+                {isPending && <Spinner data-icon="inline-start"/>}
                 Salvar
               </Button>
             </DialogFooter>

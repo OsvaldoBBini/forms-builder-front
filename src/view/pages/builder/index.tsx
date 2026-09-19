@@ -9,8 +9,12 @@ import { useSaveForm } from "./hooks/useSaveForm";
 import { FieldCard } from "./components/fieldCard";
 import { useCallback } from "react";
 import { useFormBuilder } from "./hooks/useFormBuilder";
+import { useCompany } from "@/app/hooks/useCompany";
 
 export function Builder() {
+
+  const companyId = useCompany((state) => state.companyId);
+
   const {
       fieldTypes,
       fields,
@@ -28,7 +32,7 @@ export function Builder() {
       formId
     } = useFormBuilder();
 
-  const { register, errors, handleSubmit } = useSaveForm({ formId: formId || "", fields: fields });
+  const { register, errors, handleSubmit, isCreating } = useSaveForm({ formId: formId || "", fields: fields, companyId: companyId || "" });
 
   const renderFieldCard = useCallback((fieldType: string) => {
     return (
@@ -115,6 +119,7 @@ export function Builder() {
         onSaveForm={handleSubmit}
         register={register}
         errors={errors}
+        isPending={isCreating}
       />
     
     </div>

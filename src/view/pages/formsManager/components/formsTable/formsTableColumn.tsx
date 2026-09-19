@@ -13,7 +13,7 @@ import {
 
 export interface IForms {
   formId: string;
-  formsName: string;
+  formName: string;
   lastUpdate: string;
   createdAt: string;
 }
@@ -21,7 +21,7 @@ export interface IForms {
 const customersColumnsHelper = createColumnHelper<DataTableFeatures, IForms>()
 
 export const columns = customersColumnsHelper.columns([
-  customersColumnsHelper.accessor("formsName", {
+  customersColumnsHelper.accessor("formName", {
     header: ({ column }) => {
       return (
         <Button

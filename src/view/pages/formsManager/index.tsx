@@ -1,29 +1,30 @@
 import { InitialLoader } from "@/components/loaders/initialLoader";
 import { Separator } from "@/components/ui/separator";
-import { type IForms } from "@/view/pages/formsManager/components/formsTable/formsTableColumn"
 import { EmptyForms } from "./components/emptyForms";
 import { FormsTable } from "./components/formsTable";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-// import { formatDate } from "@/utils/formatDate";
-
-const formsData: IForms[]  = [];
-// const formsData: IForms[]  = [{
-//   formId: crypto.randomUUID(),
-//   formsName: "Teste",
-//   createdAt: formatDate(new Date()),
-//   lastUpdate: formatDate(new Date()),
-// }];
+import { useCompany } from "@/app/hooks/useCompany";
+import { getForms } from "@/app/services/formsServices/getForms";
+import { useQuery } from "@tanstack/react-query";
 
 export function FormsManager () {
 
   const navigate = useNavigate();
-  const isLoading = false;
+
+  const companyId = useCompany((state) => state.companyId);
+
+  const { data: formsData, isLoading: isLoadingCustomersInfo } = useQuery({
+    queryKey: ['getForms', companyId],
+    queryFn: () => getForms(companyId as string),
+  });
   
   const handleNewForm = useCallback(() => {
     const formId = crypto.randomUUID();
     navigate(`/forms-manager/builder/${formId}`)
   }, [navigate])
+
+  const isLoading = isLoadingCustomersInfo;
 
   return (
     <>
@@ -38,6 +39,7 @@ export function FormsManager () {
           formsData && formsData?.length > 0 && !isLoading && 
           <FormsTable 
             forms={formsData}
+            onOpenModal={handleNewForm}
           /> 
         }
       </section>
