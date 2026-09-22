@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Field } from "@/components/ui/field"
+import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -9,12 +9,14 @@ import z from "zod"
 import { useEffect, useState } from "react"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Circle, MoreVertical, Square } from "lucide-react"
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import type { IField, IFieldOption } from ".."
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import type { IField, IFieldOption } from "../hooks/useFormBuilder"
+import { Textarea } from "@/components/ui/textarea"
 
 const schema = z.object({
   label: z.string().min(1, 'Texto inválido'),
   description: z.string().optional(),
+  aiPrompt: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -46,10 +48,12 @@ export function FieldCard(
     selectedField?.options || [{ value: "Opção 1", index: crypto.randomUUID() }]
   );
 
-  const [linkedToAnotherQuestion, setLinkedToAnotherQuestion] = useState( selectedField?.options?.some(option => option.linkedToAnotherQuestion) || false);
+  const [hasAiAnalysis, setHasAiAnalysis] = useState<boolean>( selectedField?.aiAnalysis.shouldAnalyse ?? false);
+
+  const [linkedToAnotherQuestion, setLinkedToAnotherQuestion] = useState<boolean | undefined>(selectedField?.options?.some((option: IFieldOption) => option.linkedToAnotherQuestion) || false);
 
   const handleToggleLinkedQuestion = () => {
-    setLinkedToAnotherQuestion(prevState => !prevState);
+    setLinkedToAnotherQuestion((prevState: boolean | undefined) => !prevState);
   }
 
   const handleUpdateOption = (index: string, newValue: string) => {
@@ -84,6 +88,7 @@ export function FieldCard(
       defaultValues: {
         label: selectedField?.label ?? "",
         description: selectedField?.description ?? "",
+        aiPrompt: selectedField?.aiAnalysis?.prompt ?? ""
       },
     });
 
@@ -91,20 +96,38 @@ export function FieldCard(
     reset({
       label: selectedField?.label ?? "",
       description: selectedField?.description ?? "",
+      aiPrompt: selectedField?.aiAnalysis?.prompt ?? ""
     });
   }, [selectedField, reset]);
 
   const handleSubmit = hookFormSubmit(
     (data) => { 
       const haveOptions = ["radioSelection", "checkbox", "selectField"].includes(fieldType) ? { options } : {};
+      const haveAiInstructions = { aiAnalysis: { prompt: data.aiPrompt ?? "", shouldAnalyse: hasAiAnalysis } };
 
       if (selectedField) {
-        onUpdate(selectedField.fieldId, { label: data.label, description: data.description, fieldType: fieldType, ...haveOptions });
+        onUpdate(
+          selectedField.fieldId, 
+          { 
+            label: data.label, 
+            description: data.description, 
+            fieldType: fieldType, 
+            ...haveOptions, 
+            ...haveAiInstructions 
+          });
         onEmptySelection();
       }
 
       else {
-        onAddField({ label: data.label, description: data.description, fieldType: fieldType, fieldId: crypto.randomUUID(), ...haveOptions });
+        onAddField(
+          { 
+            label: data.label, 
+            description: data.description, 
+            fieldType: fieldType, 
+            fieldId: crypto.randomUUID(), 
+            ...haveOptions, 
+            ...haveAiInstructions 
+          });
         onMenuSelection(null);
       }
 
@@ -194,11 +217,27 @@ export function FieldCard(
               <Button variant="ghost" size="sm" onClick={(e) => { e.preventDefault(); handleAddOption()}}>
                 Adicionar Opção
               </Button>
-
             </div>
-
           </CardContent>
         }
+        {
+          hasAiAnalysis && (
+            <>
+              <Separator className="w-full mt-4" />
+              <CardContent className="flex flex-col gap-2">
+                <FieldLabel htmlFor="aiPrompt">Instrução para análise de IA</FieldLabel>
+                <Field>
+                  <Textarea
+                    {...register("aiPrompt")}
+                    placeholder="Digite o prompt para análise de IA..." 
+                    id="aiPrompt"
+                    />
+                </Field>
+              </CardContent>
+            </>
+          )
+        }
+
         <Separator className="w-full mt-4" />
         <CardFooter className={`flex ${selectedField ? 'justify-between' : 'justify-end'} items-center`}>
            { 
@@ -218,9 +257,6 @@ export function FieldCard(
             </Select>
           }
           <div className="flex gap-2">
-            <Button type="submit" size="sm" form="text-field-form">
-              { !selectedField ? "Adicionar": "Atualizar" }
-            </Button>
             <Button 
               size="sm" 
               variant="outline" 
@@ -231,8 +267,11 @@ export function FieldCard(
             }>
               Cancelar
             </Button>
+            <Button type="submit" size="sm" form="text-field-form">
+              { !selectedField ? "Adicionar": "Atualizar" }
+            </Button>
 
-            {!["shortAnswer", "longAnswer"].includes(fieldType) &&
+            
               <>
                 <Separator orientation="vertical" />
                 <DropdownMenu>
@@ -241,16 +280,27 @@ export function FieldCard(
                       <MoreVertical />
                     </Button>
                   </DropdownMenuTrigger>
+
                   <DropdownMenuContent className="w-full" side="bottom" align="end">
+                    {!["shortAnswer", "longAnswer"].includes(fieldType) &&
+                      <>
+                        <DropdownMenuCheckboxItem 
+                            checked={linkedToAnotherQuestion} 
+                            onCheckedChange={handleToggleLinkedQuestion}>
+                          Ir para pergunta com base na resposta
+                        </DropdownMenuCheckboxItem>
+                        <DropdownMenuSeparator/>
+                      </>
+                    }
                     <DropdownMenuCheckboxItem 
-                        checked={linkedToAnotherQuestion} 
-                        onCheckedChange={handleToggleLinkedQuestion}>
-                      Ir para pergunta com base na resposta
+                        checked={hasAiAnalysis} 
+                        onCheckedChange={() => setHasAiAnalysis(prevState => !prevState)}>
+                      Análise de resposta com IA
                     </DropdownMenuCheckboxItem>
+
                   </DropdownMenuContent>
                 </DropdownMenu>
               </>
-            }
           </div>
         </CardFooter>
       </Card>

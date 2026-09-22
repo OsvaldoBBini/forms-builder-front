@@ -10,12 +10,18 @@ export interface IFieldOption {
   };
 }
 
+export interface IFieldAiAnalysis {
+  prompt: string;
+  shouldAnalyse: boolean
+}
+
 export interface IField { 
   label: string; 
   description?: string; 
   fieldType: string, 
   fieldId: string, 
-  options?: IFieldOption[] 
+  options?: IFieldOption[]
+  aiAnalysis: IFieldAiAnalysis
 }
 
 export function useFormBuilder() {
@@ -50,15 +56,31 @@ export function useFormBuilder() {
   const handleEmptySelection = useCallback(() => setSelectedField(null), []);
   const handleRemoveField = (id: string) => setFields(prevState => prevState.filter(item => item.fieldId !== id));
 
-  const handleUpdate = useCallback((id: string, newFields: Partial<IField>) => {
-    setFields((prevState) => prevState.map((item) =>
-      item.fieldId === id ? { ...item, ...newFields } : item
-    ));
+  const fieldTypesWithOptions = useMemo(() => ["radioSelection", "checkbox", "selectField"], []);
 
-    setSelectedField((prevState: IField | null) =>
-      prevState && prevState.fieldId === id ? { ...prevState, ...newFields } : prevState
+  const handleUpdate = useCallback((id: string, newFields: Partial<IField>) => {
+    const updateField = (field: IField): IField => {
+      const updatedField = { ...field, ...newFields };
+      if (
+        newFields.fieldType && !fieldTypesWithOptions.includes(newFields.fieldType)
+      ) {
+        delete updatedField.options;
+      }
+      return updatedField;
+    };
+
+    setFields((prevState) =>
+      prevState.map((field) =>
+        field.fieldId === id ? updateField(field) : field
+      )
     );
-  }, []);
+
+    setSelectedField((prevState) =>
+      prevState && prevState.fieldId === id
+        ? updateField(prevState)
+        : prevState
+    );
+  }, [fieldTypesWithOptions]);
 
   const handleMenuSelection = useCallback((fieldType: string | null) => {
     setFieldToBuild(fieldType);
