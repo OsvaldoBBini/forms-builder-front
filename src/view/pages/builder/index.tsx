@@ -14,6 +14,7 @@ import { useCompany } from "@/app/hooks/useCompany";
 export function Builder() {
 
   const companyId = useCompany((state) => state.companyId);
+  const formMode = window.location.href.includes("new") ? "new" : "edit"; 
 
   const {
       fieldTypes,
@@ -30,13 +31,14 @@ export function Builder() {
       handleSaveDialogOpen,
       retrieveField,
       formId
-    } = useFormBuilder();
+    } = useFormBuilder(companyId as string, formMode);
 
   const { register, errors, handleSubmit, isCreating } = useSaveForm({ formId: formId || "", fields: fields, companyId: companyId || "" });
 
   const renderFieldCard = useCallback((fieldType: string) => {
     return (
-        <FieldCard 
+        <FieldCard
+          key={crypto.randomUUID()} 
           fieldType={fieldType} 
           fieldTypes={fieldTypes}
           questions={fields}

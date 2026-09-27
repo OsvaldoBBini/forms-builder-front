@@ -42,7 +42,9 @@ export const columns = customersColumnsHelper.columns([
   }),
   customersColumnsHelper.display({
     id: "actions",
-    cell: () => {
+    cell: ({row, table}) => {
+      const form = row.original
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -52,7 +54,7 @@ export const columns = customersColumnsHelper.columns([
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => console.log}>
+            <DropdownMenuItem onClick={() => table.options.meta?.onEditForm(form)}>
               Editar
             </DropdownMenuItem>
             <DropdownMenuSeparator />

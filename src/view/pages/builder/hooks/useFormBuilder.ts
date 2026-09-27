@@ -1,5 +1,7 @@
 import { useFields } from "@/app/hooks/useFields";
-import { useCallback, useMemo, useState } from "react";
+import { getFields } from "@/app/services/formsServices/getFields";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export interface IFieldOption {
@@ -24,9 +26,18 @@ export interface IField {
   aiAnalysis: IFieldAiAnalysis
 }
 
-export function useFormBuilder() {
+export function useFormBuilder(companyId: string, formMode: "new" | "edit") {
+
+  const { formId } = useParams<{ formId: string }>();
 
   const { retrieveField } = useFields();
+
+  const { data: formFields, isLoading: isLoadingFields } = useQuery({
+    queryKey: ['getFields'],
+    queryFn: () => getFields(companyId as string, formId as string),
+    enabled: formMode === "edit"
+  });
+  console.log({isLoadingFields, formFields});
 
   const fieldTypes = useMemo(() => [
     {value: "shortAnswer", label: "Resposta curta"},
@@ -42,11 +53,16 @@ export function useFormBuilder() {
     setSaveDialogOpen(prevState => !prevState)
   }, []);
 
-  const { formId } = useParams<{ formId: string }>();
-
   const [fields, setFields] = useState<IField[]>([]);
   const [selectedField, setSelectedField] = useState<IField | null>(null);
   const [fieldToBuild, setFieldToBuild] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (formFields) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFields(formFields);
+    }
+  }, [formFields, setFields])
 
   const handleAddField = useCallback((field: IField) => {
       setFields([...fields, field]);

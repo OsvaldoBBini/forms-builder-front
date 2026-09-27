@@ -3,8 +3,7 @@
 export interface IForm {
   formId: string;
   formName: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fields: any[];
+  fieldsAddress: string;
   createdAt: string;
   lastUpdate: string;
 } 
@@ -17,7 +16,8 @@ export async function getForms(companyId: string) {
 
   const forms = await localStorage.getItem(`forms-${companyId}`)
   if (forms) {
-    return JSON.parse(forms)
+    const parsedForms = JSON.parse(forms)
+    return parsedForms.map((item: IForm) => ({...item, fieldsAddress: `${companyId}/fields/${item.formId}`}))
   }
   return [];
 }

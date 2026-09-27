@@ -29,16 +29,19 @@ export function OptionsMenu({
 }: IOptionsMenu) {
 
   const navigate = useNavigate();
+  const url = window.location.href;
 
   const handleCancelFromCreation = () => {
     navigate('/forms-manager')
   }
 
+  const handleSaveForm = () => url.includes("new") ? handleSaveDialogOpen() : console.log("oi")
+
   return (
     <div className="flex gap-4">
       <Menubar className="py-5">
         <MenubarMenu>
-          <MenubarTrigger className="flex gap-2" onClick={handleSaveDialogOpen}>
+          <MenubarTrigger className="flex gap-2" onClick={handleSaveForm}>
             <Save />
             Salvar
           </MenubarTrigger>
