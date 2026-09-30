@@ -17,15 +17,20 @@ import {
   MenubarTrigger 
 } from "@/components/ui/menubar";
 import { useNavigate } from "react-router-dom";
+import { Spinner } from "@/components/ui/spinner";
 
 interface IOptionsMenu {
   onMenuSelection: (fieldType: string) => void;
   handleSaveDialogOpen: () => void;
+  handleUpdateFields: () => void;
+  isUpdatingFields: boolean
 }
 
 export function OptionsMenu({ 
   onMenuSelection,
-  handleSaveDialogOpen
+  handleSaveDialogOpen,
+  handleUpdateFields,
+  isUpdatingFields
 }: IOptionsMenu) {
 
   const navigate = useNavigate();
@@ -34,8 +39,10 @@ export function OptionsMenu({
   const handleCancelFromCreation = () => {
     navigate('/forms-manager')
   }
+  const saveMode = url.includes("new")
 
-  const handleSaveForm = () => url.includes("new") ? handleSaveDialogOpen() : console.log("oi")
+  const handleSaveForm = () => saveMode ? handleSaveDialogOpen() : handleUpdateFields();
+  const isPending = saveMode ? false : isUpdatingFields;
 
   return (
     <div className="flex gap-4">
@@ -44,6 +51,7 @@ export function OptionsMenu({
           <MenubarTrigger className="flex gap-2" onClick={handleSaveForm}>
             <Save />
             Salvar
+            {isPending && <Spinner data-icon="inline-start"/>}
           </MenubarTrigger>
         </MenubarMenu>
 

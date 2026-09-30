@@ -51,7 +51,7 @@ export function Customers () {
       { isLoading && <InitialLoader customText="Estamos carregando seus clientes"/>}
       { customersData?.length === 0 && !isLoading && <EmptyCustomers onOpenModal={handleModalStatus}/>}
       { 
-        customersData && customersData?.length > 0 && !isLoading && 
+        !isLoading && customersData && customersData?.length > 0 &&  
         <CustomersTable 
           handleModalStatus={handleModalStatus}
           handleSelectedCustomer={handleSelectedCustomer} 

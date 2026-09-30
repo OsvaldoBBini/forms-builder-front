@@ -5,7 +5,6 @@ export interface IForm {
   formName: string;
   fieldsAddress: string;
   createdAt: string;
-  lastUpdate: string;
 } 
 
 // interface FormsResponse { data: { items: IForm[] } }

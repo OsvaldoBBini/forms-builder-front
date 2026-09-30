@@ -33,7 +33,14 @@ export function Builder() {
       formId
     } = useFormBuilder(companyId as string, formMode);
 
-  const { register, errors, handleSubmit, isCreating } = useSaveForm({ formId: formId || "", fields: fields, companyId: companyId || "" });
+  const { 
+    register, 
+    errors, 
+    handleSubmit, 
+    isCreating, 
+    handleUpdateFields, 
+    isUpdatingFields 
+  } = useSaveForm({ formId: formId || "", fields: fields, companyId: companyId || "" });
 
   const renderFieldCard = useCallback((fieldType: string) => {
     return (
@@ -111,7 +118,9 @@ export function Builder() {
       <footer className="mt-auto flex justify-center py-4">
         <OptionsMenu 
           onMenuSelection={handleMenuSelection} 
-          handleSaveDialogOpen={handleSaveDialogOpen} 
+          handleSaveDialogOpen={handleSaveDialogOpen}
+          handleUpdateFields={handleUpdateFields}
+          isUpdatingFields={isUpdatingFields}
         />
       </footer>
 

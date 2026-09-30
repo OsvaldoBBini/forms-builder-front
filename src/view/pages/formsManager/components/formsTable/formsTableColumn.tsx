@@ -37,9 +37,6 @@ export const columns = customersColumnsHelper.columns([
   customersColumnsHelper.accessor("createdAt", {
     header: "Criado em",
   }),
-  customersColumnsHelper.accessor("lastUpdate", {
-    header: "Última atualização",
-  }),
   customersColumnsHelper.display({
     id: "actions",
     cell: ({row, table}) => {

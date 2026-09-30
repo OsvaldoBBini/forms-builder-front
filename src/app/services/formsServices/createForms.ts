@@ -4,7 +4,6 @@ export interface IForm {
   formId: string;
   formName: string;
   createdAt: string;
-  lastUpdate: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: any[]
 } 

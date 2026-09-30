@@ -8,6 +8,8 @@ import { formatDate } from "@/utils/formatDate";
 import { useMutation } from "@tanstack/react-query";
 import type { IForm } from "@/app/services/formsServices/createForms";
 import { formsServices } from "@/app/services/formsServices";
+import type { IFields } from "@/app/services/formsServices/updateFields";
+import { useCallback } from "react";
 
 
 const schema = z.object({
@@ -40,6 +42,15 @@ export function useSaveForm({ formId, fields, companyId }: IUseSaveFormProps) {
     mutationFn: async (data: IForm) => { return formsServices.createForms(companyId, data) }
   });
 
+  const { mutateAsync: updateFields, isPending: isUpdatingFields } = useMutation({
+    mutationKey: ["updateFields"],
+    mutationFn: async (data: IFields) => { return formsServices.updateFields(companyId, data) }
+  });
+
+  const handleUpdateFields = useCallback(() => {
+    updateFields({formId, fields})
+  }, [fields, formId, updateFields]);
+
   const handleSubmit = hookFormSubmit(async (data: FormData) => {
     try {
       
@@ -48,7 +59,6 @@ export function useSaveForm({ formId, fields, companyId }: IUseSaveFormProps) {
         formName: data.formName,
         fields: fields,
         createdAt: formatDate(new Date()),
-        lastUpdate: formatDate(new Date()),
       }
 
       await createForm(formData);
@@ -69,7 +79,7 @@ export function useSaveForm({ formId, fields, companyId }: IUseSaveFormProps) {
   });
 
   return {
-    register, errors, handleSubmit, isCreating
+    register, errors, handleSubmit, isCreating, handleUpdateFields, isUpdatingFields
   }
   
 }
