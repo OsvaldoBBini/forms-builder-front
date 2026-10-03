@@ -1,5 +1,4 @@
 import { InitialLoader } from "@/components/loaders/initialLoader";
-import { Separator } from "@/components/ui/separator";
 import { EmptyForms } from "./components/emptyForms";
 import { FormsTable } from "./components/formsTable";
 import { useCallback } from "react";
@@ -7,6 +6,7 @@ import { useCompany } from "@/app/hooks/useCompany";
 import { type IForm } from "@/app/services/formsServices/getForms";
 import { useNavigateTo } from "@/hooks/useNavigateTo";
 import { useForms } from "@/hooks/useForms";
+import { Header } from "@/components/header";
 
 export function FormsManager () {
 
@@ -29,10 +29,7 @@ export function FormsManager () {
 
   return (
     <>
-      <header className="flex justify-between items-center pb-1">
-        <h1>Formulários</h1>
-      </header>
-      <Separator/>
+      <Header title="Formulários"/>
       <section className="pt-1">
         { isLoading && <InitialLoader customText="Estamos carregando seus clientes"/>}
         { formsData?.length === 0 && !isLoading && <EmptyForms onOpenModal={handleNewForm}/>}

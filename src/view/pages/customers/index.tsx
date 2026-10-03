@@ -1,4 +1,3 @@
-import { Separator } from "@/components/ui/separator";
 import { EmptyCustomers } from "./components/emptyCustomers";
 import { useCallback, useState } from "react";
 import { InitialLoader } from "@/components/loaders/initialLoader";
@@ -7,6 +6,7 @@ import { type ICustomer } from "@/app/services/customersServices/getCustomers";
 import { useCompany } from "@/app/hooks/useCompany";
 import { CustomersDialog } from "./components/customersDialog";
 import { useCostumers } from "@/hooks/useCostumers";
+import { Header } from "@/components/header";
 
 
 export function Customers () {
@@ -39,10 +39,7 @@ export function Customers () {
 
   return (
     <>
-    <header className="flex justify-between items-center pb-1">
-      <h1>Clientes</h1>
-    </header>
-    <Separator/>
+    <Header title="Clientes"/>
     <section className="pt-1">
       { isLoading && <InitialLoader customText="Estamos carregando seus clientes"/>}
       { customersData?.length === 0 && !isLoading && <EmptyCustomers onOpenModal={handleModalStatus}/>}
