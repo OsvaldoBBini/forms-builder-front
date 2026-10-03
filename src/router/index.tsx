@@ -35,6 +35,7 @@ export function Router() {
             <Route path='/forms-manager' element={<FormsManager/>}/>
             <Route path='/forms-manager/builder/new/:formId' element={<Builder/>}/>
             <Route path='/forms-manager/builder/edit/:formId' element={<Builder/>}/>
+            <Route path='/new-answer/:formId/:answerId' element={<Home/>}/>
           </Route>
         
         </Routes>

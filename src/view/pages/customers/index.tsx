@@ -3,10 +3,10 @@ import { EmptyCustomers } from "./components/emptyCustomers";
 import { useCallback, useState } from "react";
 import { InitialLoader } from "@/components/loaders/initialLoader";
 import { CustomersTable } from "./components/customersTable";
-import { getCustomers, type ICustomer } from "@/app/services/customersServices/getCustomers";
-import { useQuery } from "@tanstack/react-query";
+import { type ICustomer } from "@/app/services/customersServices/getCustomers";
 import { useCompany } from "@/app/hooks/useCompany";
 import { CustomersDialog } from "./components/customersDialog";
+import { useCostumers } from "@/hooks/useCostumers";
 
 
 export function Customers () {
@@ -15,11 +15,7 @@ export function Customers () {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedCustomer, setSelectedCustomer] = useState<undefined | ICustomer>(undefined);
 
-  const { data: customersData, isLoading: isLoadingCustomersInfo } = useQuery({
-    queryKey: ['getCustomers', companyId],
-    queryFn: () => getCustomers(companyId as string),
-  });
-
+  const { customersData, isLoadingCustomersInfo } = useCostumers(companyId as string);
   const isLoading = isLoadingCustomersInfo;
 
   const handleCleanSelectedCustomer = useCallback(
@@ -69,3 +65,4 @@ export function Customers () {
     </>
   )
 }
+

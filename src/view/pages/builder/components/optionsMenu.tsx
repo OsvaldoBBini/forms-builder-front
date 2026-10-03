@@ -17,8 +17,8 @@ import {
   MenubarSeparator, 
   MenubarTrigger 
 } from "@/components/ui/menubar";
-import { useNavigate } from "react-router-dom";
 import { Spinner } from "@/components/ui/spinner";
+import { useNavigateTo } from "@/hooks/useNavigateTo";
 
 interface IOptionsMenu {
   onMenuSelection: (fieldType: string) => void;
@@ -34,11 +34,11 @@ export function OptionsMenu({
   isUpdatingFields
 }: IOptionsMenu) {
 
-  const navigate = useNavigate();
+  const { handleNavigateTo } = useNavigateTo();
   const url = window.location.href;
 
   const handleCancelFromCreation = () => {
-    navigate('/forms-manager')
+    handleNavigateTo('/forms-manager')
   }
   const newMode = url.includes("new")
 

@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { companyServices } from '@/app/services/companyServices';
 import { useQuery } from '@tanstack/react-query';
 import { profileServices } from '@/app/services/profileServices';
@@ -8,7 +7,6 @@ export function useAppLayout() {
 
   const { getCompanies } = companyServices;
   const { getUserInfo } = profileServices;
-  const navigate = useNavigate();
   
   const { data: companies, isLoading: isLoadingCompanies } = useQuery({
     queryKey: ['getCompanies'],
@@ -21,10 +19,6 @@ export function useAppLayout() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setModalShouldOpen(!isLoadingCompanies && companies?.length === 0);
   }, [companies, isLoadingCompanies]);
-
-  const navigateToPage = (address: string) => {
-    navigate(address);
-  }
 
   const handleModalShouldOpen = useCallback(
     (state: boolean) => setModalShouldOpen(state), 
@@ -39,7 +33,6 @@ export function useAppLayout() {
 
   return {
     modalShouldOpen,
-    navigateToPage,
     handleModalShouldOpen,
     userData,
     companies,

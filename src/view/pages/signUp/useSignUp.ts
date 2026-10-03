@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type SignUpParams } from "@/app/services/authServices/signUp";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import { triggerToast } from "@/utils/toaster";
+import { useNavigateTo } from "@/hooks/useNavigateTo";
 
 const schema = z.object({
   fullName: z.string().min(2, 'Informe seu nome completo'),
@@ -32,7 +32,7 @@ type FormData = z.infer<typeof schema>
 
 export function useSignUp() {
 
-  const navigate = useNavigate();
+  const { handleNavigateTo } = useNavigateTo();
   const storeUserId = useAuth((state) => state.storeUserId); 
   const storeUserEmail = useAuth((state) => state.storeUserEmail); 
 
@@ -50,7 +50,7 @@ export function useSignUp() {
       .then(({ userId }) => {   
         storeUserId(userId);
         storeUserEmail(data.email);
-        navigate("/account-confirmation") 
+        handleNavigateTo("/account-confirmation");
         return triggerToast({ toastType: "success", toastMessage: "Um código de validação foi enviado a seu e-mail" })
       })
       .catch(() => {

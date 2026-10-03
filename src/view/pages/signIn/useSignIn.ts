@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { SigninParams } from "@/app/services/authServices/signIn";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useNavigate } from 'react-router-dom';
 import { triggerToast } from '@/utils/toaster';
+import { useNavigateTo } from '@/hooks/useNavigateTo';
 
 const schema = z.object({
   email: z.email('E-mail válido'),
@@ -17,7 +17,7 @@ type FormData = z.infer<typeof schema>
 
 export function useSignIn() {
 
-  const navigate = useNavigate();
+  const { handleNavigateTo } = useNavigateTo();
 
   const signIn = useAuth((state) => state.signIn); 
   const storeUserEmail = useAuth((state) => state.storeUserEmail); 
@@ -49,7 +49,7 @@ export function useSignIn() {
         }
         
         if (err.response?.status === 403) {
-          navigate("/account-confirmation")
+          handleNavigateTo("/account-confirmation")
           return triggerToast({ toastType: "error", toastMessage: "Validação de conta necessária para acesso" })
         }
         

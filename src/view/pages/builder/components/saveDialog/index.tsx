@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator"
 import type { UseFormRegister } from "node_modules/react-hook-form/dist/types/form"
 import type { FieldErrors } from "node_modules/react-hook-form/dist/types/errors"
 import { Spinner } from "@/components/ui/spinner"
-import { useNavigate } from "react-router-dom"
+import { useNavigateTo } from "@/hooks/useNavigateTo"
 
 interface FormSaveInterface {
   open: boolean;
@@ -35,8 +35,8 @@ export function FormSaveDialog({
   isPending
 }: FormSaveInterface) {
 
-  const navigate = useNavigate();
-  const navigateToFormsManager = () => navigate("/forms-manager");
+  const { handleNavigateTo } = useNavigateTo();
+  const navigateToFormsManager = () => handleNavigateTo("/forms-manager");
 
   return (
     <Dialog open={open}>

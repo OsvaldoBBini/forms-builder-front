@@ -3,11 +3,11 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import { triggerToast } from "@/utils/toaster";
 import { useParams } from "react-router-dom";
 import type { ResetPasswordParams } from "@/app/services/authServices/resetPassword";
 import { authService } from "@/app/services/authServices";
+import { useNavigateTo } from "@/hooks/useNavigateTo";
 
 const schema = z.object({
   password: z.string()
@@ -38,7 +38,7 @@ export function useNewPassword() {
 
   const { email, code } = useParams();
 
-  const navigate = useNavigate(); 
+  const { handleNavigateTo } = useNavigateTo();
   const storeUserEmail = useAuth((state) => state.storeUserEmail); 
 
   const { handleSubmit: hookFormSubmit, register, formState: {errors} } = useForm<FormData>({
@@ -57,7 +57,7 @@ export function useNewPassword() {
     await mutateAsync({email: email, confirmationCode: code, newPassword: data.password})
       .then(() => {   
         storeUserEmail(email);
-        navigate("/signin") 
+        handleNavigateTo("/signin")
         return triggerToast({ toastType: "success", toastMessage: "Sua senha foi alterada com sucesso!!" })
       })
       .catch((err) => {

@@ -3,30 +3,27 @@ import { Separator } from "@/components/ui/separator";
 import { EmptyForms } from "./components/emptyForms";
 import { FormsTable } from "./components/formsTable";
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { useCompany } from "@/app/hooks/useCompany";
-import { getForms, type IForm } from "@/app/services/formsServices/getForms";
-import { useQuery } from "@tanstack/react-query";
+import { type IForm } from "@/app/services/formsServices/getForms";
+import { useNavigateTo } from "@/hooks/useNavigateTo";
+import { useForms } from "@/hooks/useForms";
 
 export function FormsManager () {
 
-  const navigate = useNavigate();
+  const { handleNavigateTo } = useNavigateTo();
 
   const companyId = useCompany((state) => state.companyId);
 
-  const { data: formsData, isLoading: isLoadingCustomersInfo } = useQuery({
-    queryKey: ['getForms', companyId],
-    queryFn: () => getForms(companyId as string),
-  });
+  const { formsData, isLoadingCustomersInfo } = useForms(companyId as string);
   
   const handleNewForm = useCallback(() => {
     const formId = crypto.randomUUID();
-    navigate(`/forms-manager/builder/new/${formId}`)
-  }, [navigate])
+    handleNavigateTo(`/forms-manager/builder/new/${formId}`)
+  }, [handleNavigateTo])
   
   const handleEditForm = useCallback((form: IForm) => {
-    navigate(`/forms-manager/builder/edit/${form.formId}`)
-  }, [navigate])
+    handleNavigateTo(`/forms-manager/builder/edit/${form.formId}`)
+  }, [handleNavigateTo])
 
   const isLoading = isLoadingCustomersInfo;
 

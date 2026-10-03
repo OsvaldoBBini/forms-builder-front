@@ -4,9 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from '@tanstack/react-query';
 import type { AccountConfirmationParams } from "@/app/services/authServices/accountConfirmation";
 import { authService } from "@/app/services/authServices";
-import { useNavigate } from "react-router-dom";
 import z from "zod";
 import { triggerToast } from "@/utils/toaster";
+import { useNavigateTo } from "@/hooks/useNavigateTo";
 
 const schema = z.object({
   confirmationCode: z.string().min(6, 'Código invalido'),
@@ -15,7 +15,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export function useConfirmationAccount() {
-  const navigate = useNavigate();
+  const { handleNavigateTo } = useNavigateTo();
   const userEmail = useAuth((state) => state.userEmail);
   
   const { handleSubmit: hookFormSubmit, control, formState: {errors} } = useForm<FormData>({
@@ -58,7 +58,7 @@ export function useConfirmationAccount() {
     if (userEmail)
     await mutateAsync({ confirmationCode: data.confirmationCode, email: userEmail })
       .then(() => {
-        navigate("/signin")
+        handleNavigateTo("/signin")
         return triggerToast({ toastType: "success", toastMessage: "Sua conta foi validada com sucesso!!" })
       })
       .catch((err) => {

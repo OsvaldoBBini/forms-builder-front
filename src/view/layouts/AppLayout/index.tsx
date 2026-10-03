@@ -10,19 +10,21 @@ import { CompanySwitcher } from './components/companySwitcher';
 import { CompanyDialog } from './components/companyDialog';
 import { UserSession } from './components/userSession';
 import { InitialLoader } from '@/components/loaders/initialLoader';
-import { BookUser, Form } from 'lucide-react';
+import { BookUser, Form, House } from 'lucide-react';
 import { useAppLayout } from './useAppLayout';
+import { useNavigateTo } from '@/hooks/useNavigateTo';
 
 export function AppLayout() {
 
   const {
     modalShouldOpen,
-    navigateToPage,
     handleModalShouldOpen,
     userData,
     isLoading,
     companies,
   } = useAppLayout();
+
+  const { handleNavigateTo } = useNavigateTo();
 
   return (
     <div className="overflow-x-hidden">
@@ -45,13 +47,19 @@ export function AppLayout() {
                   <SidebarGroupContent className="flex flex-col gap-2">
                     <SidebarMenu>
                       <SidebarMenuItem>
-                        <SidebarMenuButton onClick={() => navigateToPage('/customers')}>
+                        <SidebarMenuButton onClick={() => handleNavigateTo('/')}>
+                          <House />
+                          <span>Visão Geral</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton onClick={() => handleNavigateTo('/customers')}>
                           <BookUser />
                           <span>Clientes</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton onClick={() => navigateToPage('/forms-manager')}>
+                        <SidebarMenuButton onClick={() => handleNavigateTo('/forms-manager')}>
                           <Form />
                           <span>Formulários</span>
                         </SidebarMenuButton>

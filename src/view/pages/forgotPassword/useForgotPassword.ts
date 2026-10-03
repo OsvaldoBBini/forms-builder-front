@@ -1,11 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from "react-router-dom";
 import z from "zod";
 import { triggerToast } from "@/utils/toaster";
 import type { ForgotPasswordParams } from "@/app/services/authServices/forgotPassword";
 import { authService } from "@/app/services/authServices";
+import { useNavigateTo } from "@/hooks/useNavigateTo";
 
 const schema = z.object({
   email: z.email('E-mail inválido')
@@ -14,7 +14,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export function useForgotPassword() {
-  const navigate = useNavigate();
+  const { handleNavigateTo } = useNavigateTo();
   
   const { handleSubmit: hookFormSubmit, register, formState: {errors} } = useForm<FormData>({
       resolver: zodResolver(schema),
@@ -32,7 +32,7 @@ export function useForgotPassword() {
     await mutateAsync({email: data.email})
       .then(
         () => {
-          navigate("/signin") 
+          handleNavigateTo("/signin")
           return triggerToast({ toastType: "success", toastMessage: "Você receberá um e-mail para redefinição de sua senha" })
         }
       )
