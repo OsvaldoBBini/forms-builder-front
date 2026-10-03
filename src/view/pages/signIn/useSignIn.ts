@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { SigninParams } from "@/app/services/authServices/signIn";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useNavigate } from 'react-router-dom';
-import { retriveToast } from '@/utils/toaster';
+import { triggerToast } from '@/utils/toaster';
 
 const schema = z.object({
   email: z.email('E-mail válido'),
@@ -45,19 +45,19 @@ export function useSignIn() {
         storeUserEmail(data.email);
           
         if (err.response?.status === 401) {
-          return retriveToast({toastType: "error", toastMessage: "E-mail ou senha incorretos"})
+          return triggerToast({toastType: "error", toastMessage: "E-mail ou senha incorretos"})
         }
         
         if (err.response?.status === 403) {
           navigate("/account-confirmation")
-          return retriveToast({ toastType: "error", toastMessage: "Validação de conta necessária para acesso" })
+          return triggerToast({ toastType: "error", toastMessage: "Validação de conta necessária para acesso" })
         }
         
         if (err.response?.status === 404) {
-          return retriveToast({ toastType: "error", toastMessage: "Usuário não encontrado" })
+          return triggerToast({ toastType: "error", toastMessage: "Usuário não encontrado" })
         }
 
-        return retriveToast({ toastType: "error", toastMessage: "Algo de errado ocorreu, tente novamente mais tarde" })
+        return triggerToast({ toastType: "error", toastMessage: "Algo de errado ocorreu, tente novamente mais tarde" })
       })
   });
 

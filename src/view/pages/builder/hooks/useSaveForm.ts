@@ -1,4 +1,4 @@
-import { retriveToast } from "@/utils/toaster";
+import { triggerToast } from "@/utils/toaster";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import z from "zod";
@@ -48,7 +48,12 @@ export function useSaveForm({ formId, fields, companyId }: IUseSaveFormProps) {
   });
 
   const handleUpdateFields = useCallback(() => {
-    updateFields({formId, fields})
+    updateFields({formId, fields});
+    triggerToast({
+      toastType: "success",
+      toastMessage: "Campos atualizados com sucesso",
+      toastProps: { position: "top-center" }
+    })
   }, [fields, formId, updateFields]);
 
   const handleSubmit = hookFormSubmit(async (data: FormData) => {
@@ -63,13 +68,13 @@ export function useSaveForm({ formId, fields, companyId }: IUseSaveFormProps) {
 
       await createForm(formData);
 
-      return retriveToast({
+      return triggerToast({
         toastType: "success",
         toastMessage: "Formulário salvo com sucesso"
       }) 
     }
     catch {
-      return retriveToast({
+      return triggerToast({
         toastType: "error",
         toastMessage: "Erro ao salvar seu formulário. Tente novamente mais tarde"
       })

@@ -6,7 +6,7 @@ import type { AccountConfirmationParams } from "@/app/services/authServices/acco
 import { authService } from "@/app/services/authServices";
 import { useNavigate } from "react-router-dom";
 import z from "zod";
-import { retriveToast } from "@/utils/toaster";
+import { triggerToast } from "@/utils/toaster";
 
 const schema = z.object({
   confirmationCode: z.string().min(6, 'Código invalido'),
@@ -42,14 +42,14 @@ export function useConfirmationAccount() {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const retriveNewConfirmationCode = async (event: any) => {
+  const retrieveNewConfirmationCode = async (event: any) => {
     event.preventDefault();
     await mutateAsyncResend()
       .then(
-        () => retriveToast({toastType: "success", toastMessage: "Um novo código foi enviado para seu e-mail"})
+        () => triggerToast({toastType: "success", toastMessage: "Um novo código foi enviado para seu e-mail"})
       )
       .catch(
-        () => retriveToast({toastType: "error", toastMessage: "Não foi possível reenviar o código de confirmação"})
+        () => triggerToast({toastType: "error", toastMessage: "Não foi possível reenviar o código de confirmação"})
     )
   }
 
@@ -59,18 +59,18 @@ export function useConfirmationAccount() {
     await mutateAsync({ confirmationCode: data.confirmationCode, email: userEmail })
       .then(() => {
         navigate("/signin")
-        return retriveToast({ toastType: "success", toastMessage: "Sua conta foi validada com sucesso!!" })
+        return triggerToast({ toastType: "success", toastMessage: "Sua conta foi validada com sucesso!!" })
       })
       .catch((err) => {
         if (err.response?.status === 411) {
-          return retriveToast({toastType: "error", toastMessage: "O código informado está expirado"})
+          return triggerToast({toastType: "error", toastMessage: "O código informado está expirado"})
         }
         
         if (err.response?.status === 404) {
-          return retriveToast({toastType: "error", toastMessage: "O código informado é inválido"})
+          return triggerToast({toastType: "error", toastMessage: "O código informado é inválido"})
         }
 
-        return retriveToast({ toastType: "error", toastMessage: "Algo de errado ocorreu, tente novamente mais tarde" })
+        return triggerToast({ toastType: "error", toastMessage: "Algo de errado ocorreu, tente novamente mais tarde" })
       })
   });
 
@@ -80,7 +80,7 @@ export function useConfirmationAccount() {
     isPending,
     isPendingResend,
     handleSubmit,
-    retriveNewConfirmationCode
+    retrieveNewConfirmationCode
   }
 
 }

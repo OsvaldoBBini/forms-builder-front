@@ -6,7 +6,8 @@ import {
   ListIndentIncrease,
   TextAlignStart,
   Save,
-  Trash} from "lucide-react"
+  Trash,
+  CircleArrowLeft} from "lucide-react"
 import { 
   Menubar, 
   MenubarContent, 
@@ -39,10 +40,10 @@ export function OptionsMenu({
   const handleCancelFromCreation = () => {
     navigate('/forms-manager')
   }
-  const saveMode = url.includes("new")
+  const newMode = url.includes("new")
 
-  const handleSaveForm = () => saveMode ? handleSaveDialogOpen() : handleUpdateFields();
-  const isPending = saveMode ? false : isUpdatingFields;
+  const handleSaveForm = () => newMode ? handleSaveDialogOpen() : handleUpdateFields();
+  const isPending = newMode ? false : isUpdatingFields;
 
   return (
     <div className="flex gap-4">
@@ -93,8 +94,15 @@ export function OptionsMenu({
       <Menubar className="py-5">
         <MenubarMenu>
           <MenubarTrigger className="flex gap-2" onClick={handleCancelFromCreation}>
-            <Trash />
-            Cancelar
+            {newMode ? 
+            <>
+              <Trash />
+              Cancelar 
+            </> : 
+            <>
+              <CircleArrowLeft />
+              Voltar
+            </>}
           </MenubarTrigger>
         </MenubarMenu>
       </Menubar>

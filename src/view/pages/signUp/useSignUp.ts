@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type SignUpParams } from "@/app/services/authServices/signUp";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { retriveToast } from "@/utils/toaster";
+import { triggerToast } from "@/utils/toaster";
 
 const schema = z.object({
   fullName: z.string().min(2, 'Informe seu nome completo'),
@@ -51,10 +51,10 @@ export function useSignUp() {
         storeUserId(userId);
         storeUserEmail(data.email);
         navigate("/account-confirmation") 
-        return retriveToast({ toastType: "success", toastMessage: "Um código de validação foi enviado a seu e-mail" })
+        return triggerToast({ toastType: "success", toastMessage: "Um código de validação foi enviado a seu e-mail" })
       })
       .catch(() => {
-        return retriveToast({toastType: "error", toastMessage: "Credenciais inválidas"})
+        return triggerToast({toastType: "error", toastMessage: "Credenciais inválidas"})
       })
   });
 

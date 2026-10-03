@@ -2,7 +2,7 @@ import z from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { retriveToast } from "@/utils/toaster"
+import { triggerToast } from "@/utils/toaster"
 import type { INewCustomer } from "@/app/services/customersServices/createCustomers"
 import { customersServices } from "@/app/services/customersServices"
 import type { ICustomer } from "@/app/services/customersServices/getCustomers"
@@ -73,20 +73,20 @@ export function useCustomersDialog({
     try {
       if (customer) {
         await updateCustomer({ ...data, customerId: customer.customerId });
-        return retriveToast({
+        return triggerToast({
           toastType: "success",
           toastMessage: "Cliente atualizado com sucesso"
         }) 
       }
       
       await createCustomer(data);
-      return retriveToast({
+      return triggerToast({
         toastType: "success",
         toastMessage: "Cliente cadastrado com sucesso"
       }) 
     }
     catch {
-      return retriveToast({
+      return triggerToast({
         toastType: "error",
         toastMessage: "Erro ao cadastrar seu cliente. Tente novamente mais tarde"
       })

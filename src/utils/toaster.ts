@@ -1,13 +1,13 @@
 import { toast, type ToasterProps } from "sonner";
 
 
-interface IRetriveTost {
+interface ITriggerTost {
   toastType: "error" | "success" | "warning",
   toastMessage: string
   toastProps?: ToasterProps
 }
 
-export function retriveToast({ toastType, toastMessage, toastProps }: IRetriveTost) {
+export function triggerToast({ toastType, toastMessage, toastProps }: ITriggerTost) {
 
   const factory = {
     error: toast.error,

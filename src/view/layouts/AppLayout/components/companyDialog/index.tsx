@@ -18,7 +18,7 @@ import { XCircleIcon } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { CreateCompanyParams } from "@/app/services/companyServices/createCompany"
 import { companyServices } from "@/app/services/companyServices"
-import { retriveToast } from "@/utils/toaster"
+import { triggerToast } from "@/utils/toaster"
 import { Spinner } from "@/components/ui/spinner"
 import { Separator } from "@/components/ui/separator"
 
@@ -67,13 +67,13 @@ export function CompanyDialog({
   const handleSubmit = hookFormSubmit(async (data: FormData) => {
     await mutateAsync(data).then(async () => {
       
-      return retriveToast({
+      return triggerToast({
         toastType: "success",
         toastMessage: "Empresa cadastrada com sucesso"
       }) 
     }
   ).catch(() => {
-    return retriveToast({
+    return triggerToast({
       toastType: "error",
       toastMessage: "Erro ao cadastrar sua empresa. Tente novamento mais tarde"
     })

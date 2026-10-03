@@ -23,7 +23,7 @@ import { RefreshCwIcon } from "lucide-react";
 
 
 export function ConfirmationAccount() {
-  const { handleSubmit, control, errors, isPending, isPendingResend, retriveNewConfirmationCode } = useConfirmationAccount();
+  const { handleSubmit, control, errors, isPending, isPendingResend, retrieveNewConfirmationCode } = useConfirmationAccount();
 
   return (
     <form onSubmit={handleSubmit}>
@@ -45,7 +45,7 @@ export function ConfirmationAccount() {
                   disabled={isPendingResend} 
                   variant="outline" 
                   size="xs" 
-                  onClick={retriveNewConfirmationCode}>
+                  onClick={retrieveNewConfirmationCode}>
                   {isPendingResend && <Spinner data-icon="inline-start"/>}
                   {!isPendingResend && <RefreshCwIcon />}
                   Reenviar código

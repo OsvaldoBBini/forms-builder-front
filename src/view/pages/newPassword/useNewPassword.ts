@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { retriveToast } from "@/utils/toaster";
+import { triggerToast } from "@/utils/toaster";
 import { useParams } from "react-router-dom";
 import type { ResetPasswordParams } from "@/app/services/authServices/resetPassword";
 import { authService } from "@/app/services/authServices";
@@ -58,19 +58,19 @@ export function useNewPassword() {
       .then(() => {   
         storeUserEmail(email);
         navigate("/signin") 
-        return retriveToast({ toastType: "success", toastMessage: "Sua senha foi alterada com sucesso!!" })
+        return triggerToast({ toastType: "success", toastMessage: "Sua senha foi alterada com sucesso!!" })
       })
       .catch((err) => {
 
         if (err.response?.status === 411) {
-          return retriveToast({toastType: "error", toastMessage: "O código informado está expirado"})
+          return triggerToast({toastType: "error", toastMessage: "O código informado está expirado"})
         }
         
         if (err.response?.status === 404) {
-          return retriveToast({toastType: "error", toastMessage: "O código informado é inválido"})
+          return triggerToast({toastType: "error", toastMessage: "O código informado é inválido"})
         }
 
-        return retriveToast({ toastType: "error", toastMessage: "Algo de errado ocorreu, tente novamente mais tarde" })
+        return triggerToast({ toastType: "error", toastMessage: "Algo de errado ocorreu, tente novamente mais tarde" })
       })
   });
 
