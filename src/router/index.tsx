@@ -12,6 +12,7 @@ import { AppLayout } from '@/view/layouts/AppLayout'
 import { Customers } from '@/view/pages/customers'
 import { FormsManager } from '@/view/pages/formsManager'
 import { Builder } from '@/view/pages/builder'
+import { Answer } from '@/view/pages/answer'
 
 export function Router() {
 
@@ -35,7 +36,7 @@ export function Router() {
             <Route path='/forms-manager' element={<FormsManager/>}/>
             <Route path='/forms-manager/builder/new/:formId' element={<Builder/>}/>
             <Route path='/forms-manager/builder/edit/:formId' element={<Builder/>}/>
-            <Route path='/new-answer/:formId/:answerId' element={<Home/>}/>
+            <Route path='/new-answer/:formId/:answerId' element={<Answer/>}/>
           </Route>
         
         </Routes>

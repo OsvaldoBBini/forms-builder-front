@@ -1,0 +1,134 @@
+import { useCompany } from "@/app/hooks/useCompany";
+import { useCostumers } from "@/hooks/useCostumers";
+import { useForms } from "@/hooks/useForms";
+import { useNavigateTo } from "@/hooks/useNavigateTo";
+import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxList, ComboboxLabel, ComboboxCollection } from "@/components/ui/combobox";
+import type { ICustomer } from "@/app/services/customersServices/getCustomers";
+import { Spinner } from "@/components/ui/spinner";
+import { Label } from "@/components/ui/label";
+import type { IForm } from "@/app/services/formsServices/getForms";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+
+interface NewAnswerDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export function NewAnswerDialog({ open, onClose }: NewAnswerDialogProps) {
+
+  const { handleNavigateTo } = useNavigateTo();
+  const companyId = useCompany((state) => state.companyId);
+  const { customersData, isLoadingCustomersInfo } = useCostumers(companyId as string);
+  const { formsData, isLoadingFormsInfo } = useForms(companyId as string);
+
+  const [selectedCustomer, setSelectedCustomer] = useState<ICustomer | null>(null);
+  const [selectedForm, setSelectedForm] = useState<IForm | null>(null);
+
+  const handleSelectedCustomer = (customer: ICustomer | null) => {
+    setSelectedCustomer(customer);
+  }
+
+  const handleStartAnswer = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("selectedCustomer", { selectedCustomer });
+    console.log("selectedForm", { selectedForm });
+    handleNavigateTo(`/new-answer/${selectedForm?.formId}/${crypto.randomUUID()}`);
+  }
+
+  return (
+    <Dialog open={open}>
+      <DialogContent showCloseButton={false} className="min-w-sm">
+        <DialogTitle>Nova Resposta</DialogTitle>
+        <form className="flex flex-col gap-y-4" onSubmit={handleStartAnswer}>
+
+          <div className="flex flex-col gap-y-2">
+            <Label>Cliente</Label>
+            <div className="flex items-center gap-x-2">
+              {isLoadingCustomersInfo && <Spinner data-icon="inline-start"/>}
+              <Combobox 
+                items={ customersData } 
+                value={ selectedCustomer }
+                onValueChange={ handleSelectedCustomer }
+                itemToStringLabel={(customer: ICustomer | null) => `${customer?.fullName} - CPF: ${customer?.cpf}`}
+              >
+                <ComboboxInput placeholder="Selecione um cliente" disabled={isLoadingCustomersInfo} className="flex-1"/>
+                <ComboboxContent>
+                  <ComboboxEmpty>Nenhum cliente encontrado.</ComboboxEmpty>
+                  <ComboboxList>
+                    <ComboboxGroup>
+                      <ComboboxLabel>Clientes</ComboboxLabel>
+                      <ComboboxCollection>
+                        {(item: ICustomer) => (
+                          <ComboboxItem 
+                            className="pointer-events-auto cursor-pointer" 
+                            key={item.customerId} 
+                            value={item}
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium">{item.fullName}</span>
+                              <span className="text-xs text-muted-foreground">CPF: {item.cpf}</span>
+                            </div>
+                          </ComboboxItem>
+                        )}
+                      </ComboboxCollection>
+                    </ComboboxGroup>
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </div>
+          </div>
+          
+          <div className="flex flex-col gap-y-2">
+            <Label>Formulário</Label>
+            <div className="flex items-center gap-x-2">
+              {isLoadingFormsInfo && <Spinner data-icon="inline-start"/>}
+              <Combobox 
+                items={ formsData } 
+                value={ selectedForm } 
+                onValueChange={(value) => { setSelectedForm(value) }}
+                itemToStringLabel={(form: IForm | null) => form?.formName || ""}
+                >
+                <ComboboxInput placeholder="Selecione um formulário" disabled={isLoadingFormsInfo} className="flex-1"/>
+                <ComboboxContent>
+                  <ComboboxEmpty>Nenhum formulário encontrado.</ComboboxEmpty>
+                  <ComboboxList>
+                    <ComboboxGroup>
+                      <ComboboxLabel>Formulários</ComboboxLabel>
+                      <ComboboxCollection>
+                        {(item: IForm) => (
+                          <ComboboxItem 
+                            className="pointer-events-auto cursor-pointer" 
+                            key={item.formId} 
+                            value={item}>
+                            {item.formName}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxCollection>
+                    </ComboboxGroup>
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </div>
+          </div>
+
+          <Separator/>
+          <DialogFooter>
+            <Button onClick={(e) => {
+              e.preventDefault();
+              setSelectedCustomer(null);
+              setSelectedForm(null);
+              onClose()
+            }} 
+            variant="outline">Cancelar</Button>
+            <Button type="submit">
+              Iniciar Resposta
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
