@@ -11,6 +11,8 @@ import type { IForm } from "@/app/services/formsServices/getForms";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useCustomer } from "@/app/hooks/useCustomer";
+import { useShallow } from "zustand/react/shallow";
 
 interface NewAnswerDialogProps {
   open: boolean;
@@ -20,21 +22,22 @@ interface NewAnswerDialogProps {
 export function NewAnswerDialog({ open, onClose }: NewAnswerDialogProps) {
 
   const { handleNavigateTo } = useNavigateTo();
+
   const companyId = useCompany((state) => state.companyId);
+  const { customer, setCustomer } = useCustomer(useShallow(
+    state => ({ customer: state.customer, setCustomer: state.setCustomer })));
+
   const { customersData, isLoadingCustomersInfo } = useCostumers(companyId as string);
   const { formsData, isLoadingFormsInfo } = useForms(companyId as string);
 
-  const [selectedCustomer, setSelectedCustomer] = useState<ICustomer | null>(null);
   const [selectedForm, setSelectedForm] = useState<IForm | null>(null);
 
   const handleSelectedCustomer = (customer: ICustomer | null) => {
-    setSelectedCustomer(customer);
+    setCustomer(customer);
   }
 
-  const handleStartAnswer = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleStartAnswer = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("selectedCustomer", { selectedCustomer });
-    console.log("selectedForm", { selectedForm });
     handleNavigateTo(`/new-answer/${selectedForm?.formId}/${crypto.randomUUID()}`);
   }
 
@@ -50,9 +53,11 @@ export function NewAnswerDialog({ open, onClose }: NewAnswerDialogProps) {
               {isLoadingCustomersInfo && <Spinner data-icon="inline-start"/>}
               <Combobox 
                 items={ customersData } 
-                value={ selectedCustomer }
+                value={ customer }
                 onValueChange={ handleSelectedCustomer }
-                itemToStringLabel={(customer: ICustomer | null) => `${customer?.fullName} - CPF: ${customer?.cpf}`}
+                itemToStringLabel={
+                  (customer: ICustomer | null) => `${customer?.fullName} - CPF: ${customer?.cpf}`
+                }
               >
                 <ComboboxInput placeholder="Selecione um cliente" disabled={isLoadingCustomersInfo} className="flex-1"/>
                 <ComboboxContent>
@@ -118,7 +123,7 @@ export function NewAnswerDialog({ open, onClose }: NewAnswerDialogProps) {
           <DialogFooter>
             <Button onClick={(e) => {
               e.preventDefault();
-              setSelectedCustomer(null);
+              setCustomer(null);
               setSelectedForm(null);
               onClose()
             }} 

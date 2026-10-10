@@ -3,8 +3,6 @@ import { useState } from "react";
 import { NewAnswerDialog } from "./components/newAnswerDialog";
 
 export function Home() {
-
-
   const [isOpen, setIsOpen] = useState(false);
 
   const handleNewAnswer = () => {

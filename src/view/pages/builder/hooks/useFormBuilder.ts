@@ -27,9 +27,7 @@ export interface IField {
 }
 
 export function useFormBuilder(companyId: string, formMode: "new" | "edit") {
-
   const { formId } = useParams<{ formId: string }>();
-
   const { retrieveField } = useFields();
 
   const { data: formFields, isLoading: isLoadingFields } = useQuery({

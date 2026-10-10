@@ -14,7 +14,7 @@ export function FormsManager () {
 
   const companyId = useCompany((state) => state.companyId);
 
-  const { formsData, isLoadingCustomersInfo } = useForms(companyId as string);
+  const { formsData, isLoadingFormsInfo } = useForms(companyId as string);
   
   const handleNewForm = useCallback(() => {
     const formId = crypto.randomUUID();
@@ -25,7 +25,7 @@ export function FormsManager () {
     handleNavigateTo(`/forms-manager/builder/edit/${form.formId}`)
   }, [handleNavigateTo])
 
-  const isLoading = isLoadingCustomersInfo;
+  const isLoading = isLoadingFormsInfo;
 
   return (
     <>
