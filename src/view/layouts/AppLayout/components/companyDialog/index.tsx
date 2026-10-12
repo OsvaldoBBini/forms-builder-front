@@ -90,8 +90,8 @@ export function CompanyDialog({
 
   return (
     <Dialog open={open}>
-      <DialogContent showCloseButton={false} className="min-w-sm">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <DialogContent showCloseButton={false} className="min-w-sm p-0">
+        <form onSubmit={handleSubmit} className="space-y-4 p-4" id="company-form">
           
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
@@ -170,20 +170,22 @@ export function CompanyDialog({
               </>
             )}
 
-            <Separator/>
-            <DialogFooter>
-              {canClose && <Button onClick={(e) => {
-                e.preventDefault();
-                handleClose()
-              }} 
-              variant="outline">Cancelar</Button>}
-              <Button type="submit" disabled={isPending}>
-                {isPending && <Spinner data-icon="inline-start"/>}
-                Cadastrar
-              </Button>
-            </DialogFooter>
           </FieldGroup>
         </form>
+        
+        <Separator/>
+
+        <DialogFooter className="p-2">
+          {canClose && <Button onClick={(e) => {
+            e.preventDefault();
+            handleClose()
+          }} 
+          variant="outline">Cancelar</Button>}
+          <Button type="submit" disabled={isPending} form="company-form">
+            {isPending && <Spinner data-icon="inline-start"/>}
+            Cadastrar
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -41,9 +41,8 @@ export function CustomersDialog({
 
   return (
     <Dialog open={open}>
-      <DialogContent showCloseButton={false} className="min-w-sm">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          
+      <DialogContent showCloseButton={false} className="min-w-sm p-0">
+        <form onSubmit={handleSubmit} className="space-y-4 p-4" id="customer-form">
           <DialogHeader>
             <DialogTitle>{ customer ? "Editar Cliente" : "Cadastrar Cliente" }</DialogTitle>
             <DialogDescription>
@@ -127,20 +126,20 @@ export function CustomersDialog({
               )}
             </Field>
             
-            <Separator/>
-            <DialogFooter>
-              <Button onClick={(e) => {
-                e.preventDefault();
-                handleClose()
-              }} 
-              variant="outline">Cancelar</Button>
-              <Button type="submit" disabled={isPending}>
-                {isPending && <Spinner data-icon="inline-start"/>}
-                {customer ? "Atualizar" : "Cadastrar"}
-              </Button>
-            </DialogFooter>
           </FieldGroup>
         </form>
+        <Separator/>
+        <DialogFooter className="p-2">
+          <Button onClick={(e) => {
+            e.preventDefault();
+            handleClose()
+          }} 
+          variant="outline">Cancelar</Button>
+          <Button type="submit" form="customer-form" disabled={isPending}>
+            {isPending && <Spinner data-icon="inline-start"/>}
+            {customer ? "Atualizar" : "Cadastrar"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

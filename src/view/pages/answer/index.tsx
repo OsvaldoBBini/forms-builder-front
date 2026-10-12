@@ -4,7 +4,9 @@ import { useCustomer } from "@/app/hooks/useCustomer";
 import { useFields } from "@/app/hooks/useFields";
 import { getFields } from "@/app/services/formsServices/getFields";
 import { Card, CardContent } from "@/components/ui/card";
+import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { useQuery } from "@tanstack/react-query";
+import { BookUser } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 
@@ -28,10 +30,19 @@ export function Answer() {
       <h1 className="text-2xl font-bold">Respostas</h1>
 
       {customer && (
-        <div>
-          <p>Cliente: {customer.fullName}</p>
-          <p>CPF: {customer.cpf}</p>
-        </div>
+        <Item variant="muted" size="xs">
+          <ItemMedia variant="icon">
+            <BookUser />
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>Cliente selecionado</ItemTitle>
+            <ItemDescription>
+              <span>
+                {customer.fullName} CPF: {customer.cpf}
+              </span>
+            </ItemDescription>
+          </ItemContent>
+        </Item>
       )}
 
       <form className="flex flex-col gap-4">

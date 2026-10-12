@@ -8,7 +8,7 @@ export interface IFieldOption {
   value: string;
   index: string;
   linkedToAnotherQuestion?: {
-    questionId: string;
+    fieldId: string;
   };
 }
 

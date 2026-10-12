@@ -67,10 +67,10 @@ export function FieldCard(
     });
   }
 
-  const handleLinkQuestion = (optionIndex: string, questionId: string) => {
+  const handleLinkQuestion = (optionIndex: string, fieldId: string) => {
     setOptions(prevOptions => prevOptions.map(option =>
       option.index === optionIndex
-        ? { ...option, linkedToAnotherQuestion: { questionId } }
+        ? { ...option, linkedToAnotherQuestion: { fieldId } }
         : option
     ));
   }
@@ -180,8 +180,8 @@ export function FieldCard(
                   { linkedToAnotherQuestion && (
                     <div className="flex items-center gap-2">
                       <Select
-                        value={option.linkedToAnotherQuestion?.questionId}
-                        onValueChange={(questionId) => handleLinkQuestion(option.index, questionId)}
+                        value={option.linkedToAnotherQuestion?.fieldId}
+                        onValueChange={(fieldId) => handleLinkQuestion(option.index, fieldId)}
                       >
                         <SelectTrigger className="w-sm">
                           <SelectValue placeholder="Habilitar pergunta..." />

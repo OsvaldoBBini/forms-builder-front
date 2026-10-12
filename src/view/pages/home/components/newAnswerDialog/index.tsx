@@ -2,7 +2,7 @@ import { useCompany } from "@/app/hooks/useCompany";
 import { useCostumers } from "@/hooks/useCostumers";
 import { useForms } from "@/hooks/useForms";
 import { useNavigateTo } from "@/hooks/useNavigateTo";
-import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxList, ComboboxLabel, ComboboxCollection } from "@/components/ui/combobox";
 import type { ICustomer } from "@/app/services/customersServices/getCustomers";
 import { Spinner } from "@/components/ui/spinner";
@@ -43,9 +43,11 @@ export function NewAnswerDialog({ open, onClose }: NewAnswerDialogProps) {
 
   return (
     <Dialog open={open}>
-      <DialogContent showCloseButton={false} className="min-w-sm">
-        <DialogTitle>Nova Resposta</DialogTitle>
-        <form className="flex flex-col gap-y-4" onSubmit={handleStartAnswer}>
+      <DialogContent showCloseButton={false} className="min-w-sm p-0">
+        <form className="flex flex-col gap-y-4 p-4" id="new-answer-form" onSubmit={handleStartAnswer}>
+          <DialogHeader>
+            <DialogTitle>Nova Resposta</DialogTitle>
+          </DialogHeader>
 
           <div className="flex flex-col gap-y-2">
             <Label>Cliente</Label>
@@ -119,20 +121,20 @@ export function NewAnswerDialog({ open, onClose }: NewAnswerDialogProps) {
             </div>
           </div>
 
-          <Separator/>
-          <DialogFooter>
-            <Button onClick={(e) => {
-              e.preventDefault();
-              setCustomer(null);
-              setSelectedForm(null);
-              onClose()
-            }} 
-            variant="outline">Cancelar</Button>
-            <Button type="submit">
-              Iniciar Resposta
-            </Button>
-          </DialogFooter>
         </form>
+        <Separator/>
+        <DialogFooter className="p-2">
+          <Button onClick={(e) => {
+            e.preventDefault();
+            setCustomer(null);
+            setSelectedForm(null);
+            onClose()
+          }} 
+          variant="outline">Cancelar</Button>
+          <Button type="submit" form="new-answer-form">
+            Iniciar Resposta
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
