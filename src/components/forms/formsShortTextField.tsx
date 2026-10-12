@@ -1,13 +1,17 @@
+import type { UseFormRegister } from "react-hook-form";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
+import type { FormValues } from "./type";
 
 interface IFormsShortTextField {
-  questionNumber: string;
   description?: string;
   label: string;
+  name?: `answers.${string}`;
+  register?: UseFormRegister<FormValues>;
+  disabled: boolean
 }
 
-export function FormsShortTextField({ label, description }: IFormsShortTextField) {
+export function FormsShortTextField({ label, description, name, register, disabled = false}: IFormsShortTextField) {
   return(
     <Field>
       <FieldLabel>
@@ -18,8 +22,9 @@ export function FormsShortTextField({ label, description }: IFormsShortTextField
           {description}
         </FieldDescription>
       )}
-      <Input
+      <Input {...(register && name && register(name))}
         required
+        disabled={disabled}
       />
     </Field>
   )

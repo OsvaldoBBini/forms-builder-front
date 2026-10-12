@@ -35,7 +35,6 @@ export function useFormBuilder(companyId: string, formMode: "new" | "edit") {
     queryFn: () => getFields(companyId as string, formId as string),
     enabled: formMode === "edit"
   });
-  console.log({isLoadingFields, formFields});
 
   const fieldTypes = useMemo(() => [
     {value: "shortAnswer", label: "Resposta curta"},
@@ -114,6 +113,7 @@ export function useFormBuilder(companyId: string, formMode: "new" | "edit") {
     handleMenuSelection,
     handleSaveDialogOpen,
     retrieveField,
-    formId
+    formId,
+    isLoadingFields
   }
 }

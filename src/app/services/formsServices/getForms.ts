@@ -10,7 +10,6 @@ export interface IForm {
 // interface FormsResponse { data: { items: IForm[] } }
 
 export async function getForms(companyId: string) {
-  console.log('getForms', companyId)
   // const { data: response } = await httpClient.get<FormsResponse>(`/companies/${companyId}/forms`, {skipAuth: false});
 
   const forms = await localStorage.getItem(`forms-${companyId}`)
