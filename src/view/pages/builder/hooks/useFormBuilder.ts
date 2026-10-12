@@ -31,9 +31,9 @@ export function useFormBuilder(companyId: string, formMode: "new" | "edit") {
   const { retrieveField } = useFields();
 
   const { data: formFields, isLoading: isLoadingFields } = useQuery({
-    queryKey: ['getFields'],
+    queryKey: ['getFields', formMode, companyId, formId],
     queryFn: () => getFields(companyId as string, formId as string),
-    enabled: formMode === "edit"
+    enabled: formMode === "edit" && Boolean(companyId && formId)
   });
 
   const fieldTypes = useMemo(() => [
@@ -55,11 +55,13 @@ export function useFormBuilder(companyId: string, formMode: "new" | "edit") {
   const [fieldToBuild, setFieldToBuild] = useState<string | null>(null);
 
   useEffect(() => {
-    if (formFields) {
+    if (formMode === "new") {
       // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFields([]);
+    } else if (formFields) {
       setFields(formFields);
     }
-  }, [formFields, setFields])
+  }, [formMode, formFields, setFields])
 
   const handleAddField = useCallback((field: IField) => {
       setFields([...fields, field]);

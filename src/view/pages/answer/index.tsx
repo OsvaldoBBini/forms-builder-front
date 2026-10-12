@@ -22,8 +22,9 @@ export function Answer() {
   const { customer } = useCustomer(useShallow(state => ({ customer: state.customer })));
 
   const { data: formFields, isLoading: isLoadingFields } = useQuery({
-    queryKey: ['getFields'],
+    queryKey: ['getFields', companyId, formId],
     queryFn: () => getFields(companyId as string, formId as string),
+    enabled: Boolean(companyId && formId),
   });
 
   const dependency = useMemo(() => { return formFields && formFields.flatMap((field: IField) => 
