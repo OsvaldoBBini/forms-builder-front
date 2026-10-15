@@ -6,7 +6,6 @@ import { getFields } from "@/app/services/formsServices/getFields";
 import type { FormValues } from "@/components/forms/type";
 import { Card, CardContent } from "@/components/ui/card";
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item";
-import { Button } from "@base-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { BookUser } from "lucide-react";
 import { useCallback, useMemo } from "react";
@@ -14,14 +13,19 @@ import { useForm, useWatch } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import type { IField, IFieldOption } from "../builder/hooks/useFormBuilder";
+import { useNavigateTo } from "@/hooks/useNavigateTo";
+import { Button } from "@/components/ui/button";
 
 export function Answer() {
+
   const { retrieveField } = useFields();
+  const { handleNavigateTo } = useNavigateTo();
+  
   const companyId = useCompany((state) => state.companyId);
   const { formId, answerId } = useParams<{ formId: string; answerId: string }>();
   const { customer } = useCustomer(useShallow(state => ({ customer: state.customer })));
 
-  const { data: formFields, isLoading: isLoadingFields } = useQuery({
+  const { data: formFields } = useQuery({
     queryKey: ['getFields', companyId, formId],
     queryFn: () => getFields(companyId as string, formId as string),
     enabled: Boolean(companyId && formId),
@@ -46,6 +50,8 @@ export function Answer() {
   const handleSubmit = hookFormSubmit(async (data: FormValues) => {
     console.log({data, answerId});
   })
+
+  const handleCancel = () => handleNavigateTo("/");
   
   const answers = useWatch({
     control,
@@ -101,7 +107,11 @@ export function Answer() {
             </Card>
           )
         })}
-        <Button type="submit">Salvar</Button>
+
+        <div>
+          <Button type="submit" form="answer">Salvar</Button>
+          <Button variant="destructive" onClick={handleCancel}>Cancelar</Button>
+        </div>
       </form>
 
     </div>

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import type { IForm } from "@/app/services/formsServices/getForms";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCustomer } from "@/app/hooks/useCustomer";
 import { useShallow } from "zustand/react/shallow";
 
@@ -24,8 +24,15 @@ export function NewAnswerDialog({ open, onClose }: NewAnswerDialogProps) {
   const { handleNavigateTo } = useNavigateTo();
 
   const companyId = useCompany((state) => state.companyId);
-  const { customer, setCustomer } = useCustomer(useShallow(
-    state => ({ customer: state.customer, setCustomer: state.setCustomer })));
+  const { customer, setCustomer } = useCustomer(
+    useShallow(state => 
+      ({ customer: state.customer, setCustomer: state.setCustomer })
+    )
+  );
+
+  useEffect(() => {
+    setCustomer(null);
+  }, [setCustomer])
 
   const { customersData, isLoadingCustomersInfo } = useCostumers(companyId as string);
   const { formsData, isLoadingFormsInfo } = useForms(companyId as string);
@@ -130,7 +137,7 @@ export function NewAnswerDialog({ open, onClose }: NewAnswerDialogProps) {
             setSelectedForm(null);
             onClose()
           }} 
-          variant="outline">Cancelar</Button>
+          variant="destructive">Cancelar</Button>
           <Button type="submit" form="new-answer-form">
             Iniciar Resposta
           </Button>

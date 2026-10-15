@@ -134,7 +134,7 @@ export function CustomersDialog({
             e.preventDefault();
             handleClose()
           }} 
-          variant="outline">Cancelar</Button>
+          variant="destructive">Cancelar</Button>
           <Button type="submit" form="customer-form" disabled={isPending}>
             {isPending && <Spinner data-icon="inline-start"/>}
             {customer ? "Atualizar" : "Cadastrar"}

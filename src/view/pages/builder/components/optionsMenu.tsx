@@ -93,7 +93,7 @@ export function OptionsMenu({
 
       <Menubar className="py-5">
         <MenubarMenu>
-          <MenubarTrigger className="flex gap-2" onClick={handleCancelFromCreation}>
+          <MenubarTrigger className={`flex gap-2 ${newMode && "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40"}`} onClick={handleCancelFromCreation}>
             {newMode ? 
             <>
               <Trash />

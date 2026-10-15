@@ -180,7 +180,7 @@ export function CompanyDialog({
             e.preventDefault();
             handleClose()
           }} 
-          variant="outline">Cancelar</Button>}
+          variant="destructive">Cancelar</Button>}
           <Button type="submit" disabled={isPending} form="company-form">
             {isPending && <Spinner data-icon="inline-start"/>}
             Cadastrar
