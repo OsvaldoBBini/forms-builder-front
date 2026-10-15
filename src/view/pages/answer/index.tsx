@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { useQuery } from "@tanstack/react-query";
 import { BookUser } from "lucide-react";
-import { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
@@ -51,7 +51,10 @@ export function Answer() {
     console.log({data, answerId});
   })
 
-  const handleCancel = () => handleNavigateTo("/");
+  const handleCancel = (e: any) => {
+    e.preventDefault();
+    handleNavigateTo("/");
+  };
   
   const answers = useWatch({
     control,
@@ -68,9 +71,7 @@ export function Answer() {
   }, [dependency, answers])
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Respostas</h1>
-
+    <div className="flex flex-col gap-4 mb-4">
       {customer && (
         <Item variant="muted" size="xs">
           <ItemMedia variant="icon">
@@ -108,9 +109,9 @@ export function Answer() {
           )
         })}
 
-        <div>
-          <Button type="submit" form="answer">Salvar</Button>
+        <div className="flex justify-end gap-2">
           <Button variant="destructive" onClick={handleCancel}>Cancelar</Button>
+          <Button type="submit" form="answer">Salvar</Button>
         </div>
       </form>
 
