@@ -4,13 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import type { IField } from "./useFormBuilder";
 import { useForm } from "react-hook-form";
-import { formatDate } from "@/utils/formatDate";
 import { useMutation } from "@tanstack/react-query";
 import type { IForm } from "@/app/services/formsServices/createForms";
 import { formsServices } from "@/app/services/formsServices";
 import type { IFields } from "@/app/services/formsServices/updateFields";
 import { useCallback } from "react";
-
 
 const schema = z.object({
   formName: z.string()
@@ -25,14 +23,14 @@ const defaultValues = {
 }
 
 interface IUseSaveFormProps {
-  formId: string;
+  formId?: string;
   fields: IField[];
   companyId: string;
 }
 
 export function useSaveForm({ formId, fields, companyId }: IUseSaveFormProps) {
 
-  const {  handleSubmit: hookFormSubmit, register, reset, formState: { errors } } = useForm<FormData>({
+  const { handleSubmit: hookFormSubmit, register, reset, formState: { errors } } = useForm<FormData>({
       resolver: zodResolver(schema),
       defaultValues: defaultValues
   });
@@ -48,7 +46,7 @@ export function useSaveForm({ formId, fields, companyId }: IUseSaveFormProps) {
   });
 
   const handleUpdateFields = useCallback(() => {
-    updateFields({formId, fields});
+    if (formId) updateFields({formId, fields});
     triggerToast({
       toastType: "success",
       toastMessage: "Campos atualizados com sucesso",
@@ -58,28 +56,28 @@ export function useSaveForm({ formId, fields, companyId }: IUseSaveFormProps) {
 
   const handleSubmit = hookFormSubmit(async (data: FormData) => {
     try {
-      
       const formData = {
-        formId: formId,
+        formId: formId || crypto.randomUUID(),
         formName: data.formName,
         fields: fields,
-        createdAt: formatDate(new Date()),
-      }
+        createdAt: new Date().toISOString(),
+      };
 
       await createForm(formData);
 
-      return triggerToast({
+      triggerToast({
         toastType: "success",
         toastMessage: "Formulário salvo com sucesso"
-      }) 
-    }
-    catch {
-      return triggerToast({
+      });
+
+      reset(defaultValues);
+    } catch {
+      triggerToast({
         toastType: "error",
         toastMessage: "Erro ao salvar seu formulário. Tente novamente mais tarde"
-      })
-    } finally {
-      reset(defaultValues)
+      });
+
+      throw new Error("Failed to save form");
     }
   });
 

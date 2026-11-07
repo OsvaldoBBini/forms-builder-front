@@ -1,10 +1,11 @@
+import type { IField } from "@/view/pages/builder/hooks/useFormBuilder";
+
 // import { httpClient } from "../httpClient";
 
 export interface IFields{
   formId: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fields: any[]
-} 
+  fields: IField[];
+}
 
 // interface FormsResponse { data: { items: IForm[] } }
 

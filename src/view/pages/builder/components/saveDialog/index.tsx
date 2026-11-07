@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Dialog,
   DialogContent,
@@ -10,7 +11,6 @@ import { Field, FieldError, FieldGroup} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { XCircleIcon } from "lucide-react"
-// import { Spinner } from "@/components/ui/spinner"
 import { Separator } from "@/components/ui/separator"
 import type { UseFormRegister } from "node_modules/react-hook-form/dist/types/form"
 import type { FieldErrors } from "node_modules/react-hook-form/dist/types/errors"
@@ -20,7 +20,7 @@ import { useNavigateTo } from "@/hooks/useNavigateTo"
 interface FormSaveInterface {
   open: boolean;
   onDialogStatus: () => void;
-  onSaveForm: () => void;
+  onSaveForm: (event: any) => Promise<void>;
   register: UseFormRegister<{ formName: string; }>
   errors: FieldErrors<{ formName: string; }>
   isPending: boolean;
@@ -36,15 +36,23 @@ export function FormSaveDialog({
 }: FormSaveInterface) {
 
   const { handleNavigateTo } = useNavigateTo();
-  const navigateToFormsManager = () => handleNavigateTo("/forms-manager");
+
+  const handleSubmit = async (event: any) => {
+    event?.preventDefault();
+
+    try {
+      await onSaveForm(event);
+      handleNavigateTo("/forms-manager");
+    // eslint-disable-next-line no-empty
+    } catch {}
+  }
 
   return (
     <Dialog open={open}>
       <DialogContent showCloseButton={false} className="min-w-sm">
-        <form onSubmit={() => {
-          onSaveForm();
-          navigateToFormsManager()
-        }} className="space-y-4">
+        <form 
+          onSubmit={handleSubmit}
+          className="space-y-4">
           <DialogHeader>
             <DialogTitle>Registrar Formulário</DialogTitle>
           </DialogHeader>

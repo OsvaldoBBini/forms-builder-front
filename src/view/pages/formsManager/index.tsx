@@ -17,8 +17,7 @@ export function FormsManager () {
   const { formsData, isLoadingFormsInfo } = useForms(companyId as string);
   
   const handleNewForm = useCallback(() => {
-    const formId = crypto.randomUUID();
-    handleNavigateTo(`/forms-manager/builder/new/${formId}`)
+    handleNavigateTo(`/forms-manager/builder/new`)
   }, [handleNavigateTo])
   
   const handleEditForm = useCallback((form: IForm) => {

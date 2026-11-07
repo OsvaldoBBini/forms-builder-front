@@ -1,21 +1,16 @@
-// import { httpClient } from "../httpClient";
+import { httpClient } from "../httpClient";
 
 export interface IForm {
+  companyId: string;
   formId: string;
   formName: string;
-  fieldsAddress: string;
   createdAt: string;
 } 
 
-// interface FormsResponse { data: { items: IForm[] } }
+interface FormsResponse { data: { items: IForm[] } }
 
 export async function getForms(companyId: string) {
-  // const { data: response } = await httpClient.get<FormsResponse>(`/companies/${companyId}/forms`, {skipAuth: false});
-
-  const forms = await localStorage.getItem(`forms-${companyId}`)
-  if (forms) {
-    const parsedForms = JSON.parse(forms)
-    return parsedForms.map((item: IForm) => ({...item, fieldsAddress: `${companyId}/fields/${item.formId}`}))
-  }
-  return [];
+  const { data: response } = await httpClient.get<FormsResponse>(`/companies/${companyId}/forms`, {skipAuth: false});
+  const { data } = response;
+  return data.items;
 }

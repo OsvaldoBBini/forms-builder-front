@@ -17,10 +17,12 @@ export interface IFieldAiAnalysis {
   shouldAnalyse: boolean
 }
 
+export type IFieldType = "shortAnswer" | "longAnswer" | "radioSelection" | "checkbox" | "selectField";
+
 export interface IField { 
   label: string; 
   description?: string; 
-  fieldType: string, 
+  fieldType: IFieldType, 
   fieldId: string, 
   options?: IFieldOption[]
   aiAnalysis: IFieldAiAnalysis

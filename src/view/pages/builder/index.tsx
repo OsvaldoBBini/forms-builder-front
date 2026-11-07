@@ -40,7 +40,7 @@ export function Builder() {
     isCreating, 
     handleUpdateFields, 
     isUpdatingFields 
-  } = useSaveForm({ formId: formId || "", fields: fields, companyId: companyId || "" });
+  } = useSaveForm({ formId: formId, fields: fields, companyId: companyId || "" });
 
   const renderFieldCard = useCallback((fieldType: string) => {
     return (
