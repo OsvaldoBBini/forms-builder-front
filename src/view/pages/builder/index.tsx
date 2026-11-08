@@ -10,6 +10,7 @@ import { FieldCard } from "./components/fieldCard";
 import { useCallback } from "react";
 import { useFormBuilder } from "./hooks/useFormBuilder";
 import { useCompany } from "@/app/hooks/useCompany";
+import { InitialLoader } from "@/components/loaders/initialLoader";
 
 export function Builder() {
 
@@ -30,7 +31,8 @@ export function Builder() {
       handleMenuSelection,
       handleSaveDialogOpen,
       retrieveField,
-      formId
+      formId,
+      isLoadingFields
     } = useFormBuilder(companyId as string, formMode);
 
   const { 
@@ -70,50 +72,54 @@ export function Builder() {
     
   return (
     <div className="relative flex min-h-[calc(96dvh-3rem)] flex-col">
-      <section className="flex flex-col gap-y-4">
-        <div className="flex flex-col gap-y-4">  
-          {
-            fields.map(( field ) => {
-              if (selectedField && selectedField.fieldId === field.fieldId) 
-                return renderFieldCard(field.fieldType);
-              else {
-                const FieldComponent = retrieveField(field.fieldType) as React.ElementType;
-                return (
-                  <Card className="w-full gap-0 py-0" key={field.fieldId}>
-                    <CardContent className="m-4">
-                      <FieldComponent {...field} />
-                    </CardContent>
-                    <Separator className="w-full" />
-                    <CardFooter className="flex justify-end pt-2 pb-2 gap-x-2">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button variant="ghost" onClick={() => handleEditField(field)}>
-                            <Pencil />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Editar</p>
-                        </TooltipContent>
-                      </Tooltip>
-  
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button variant="destructive" onClick={() => handleRemoveField(field.fieldId)}>
-                            <Trash />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Excluir</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </CardFooter>
-                  </Card>
-                );}
-            })
-          }
-        </div> 
-        { fieldToBuild && renderFieldCard(fieldToBuild) } 
-      </section>
+
+      {isLoadingFields && <InitialLoader customText="Carregando campos do formulário..." />}
+      {!isLoadingFields &&
+        <section className="flex flex-col gap-y-4">
+          <div className="flex flex-col gap-y-4">  
+            {
+              fields.map(( field ) => {
+                if (selectedField && selectedField.fieldId === field.fieldId) 
+                  return renderFieldCard(field.fieldType);
+                else {
+                  const FieldComponent = retrieveField(field.fieldType) as React.ElementType;
+                  return (
+                    <Card className="w-full gap-0 py-0" key={field.fieldId}>
+                      <CardContent className="m-4">
+                        <FieldComponent {...field} />
+                      </CardContent>
+                      <Separator className="w-full" />
+                      <CardFooter className="flex justify-end pt-2 pb-2 gap-x-2">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" onClick={() => handleEditField(field)}>
+                              <Pencil />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Editar</p>
+                          </TooltipContent>
+                        </Tooltip>
+    
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="destructive" onClick={() => handleRemoveField(field.fieldId)}>
+                              <Trash />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Excluir</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </CardFooter>
+                    </Card>
+                  );}
+              })
+            }
+          </div> 
+          { fieldToBuild && renderFieldCard(fieldToBuild) } 
+        </section>
+      }
 
       <footer className="mt-auto flex justify-center py-4">
         <OptionsMenu 
