@@ -13,6 +13,7 @@ import { InitialLoader } from '@/components/loaders/initialLoader';
 import { BookUser, Form, House } from 'lucide-react';
 import { useAppLayout } from './useAppLayout';
 import { useNavigateTo } from '@/hooks/useNavigateTo';
+import { Button } from '@/components/ui/button';
 
 export function AppLayout() {
 
@@ -22,6 +23,8 @@ export function AppLayout() {
     userData,
     isLoading,
     companies,
+    isCompaniesError,
+    refetchCompanies,
   } = useAppLayout();
 
   const { handleNavigateTo } = useNavigateTo();
@@ -33,8 +36,16 @@ export function AppLayout() {
           <InitialLoader/>
         </div>
       }
+      { !isLoading && isCompaniesError &&
+        <div className="flex min-h-lvh flex-col items-center justify-center gap-4" role="alert">
+          <p>Não foi possível carregar as empresas.</p>
+          <Button onClick={() => { void refetchCompanies(); }}>
+            Tentar novamente
+          </Button>
+        </div>
+      }
       {
-        !isLoading &&
+        !isLoading && !isCompaniesError &&
         <>
           <SidebarProvider>
             <Sidebar collapsible="icon">
@@ -92,6 +103,7 @@ export function AppLayout() {
             onDialogStatus={handleModalShouldOpen}
             title='Cadastre sua empresa' 
             description='Para avançar é necessário cadastrar a sua primeira empresa'
+            companyToUpdate={null}
           />
         </>
       }

@@ -2,7 +2,6 @@ import type { IUserData } from "@/app/services/profileServices/getUserInfo";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -14,7 +13,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { EllipsisVertical, LogOut, Building2 } from "lucide-react";
+import { EllipsisVertical, LogOut } from "lucide-react";
 import { AvatarComponent } from "./components/avatarComponent";
 import { useAuth } from "@/app/hooks/useAuth";
 
@@ -56,13 +55,6 @@ export function UserSession({ userData }: UserSessionProps) {
                 <AvatarComponent fullName={userData.fullName} email={userData.email}/>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Building2 />
-                Gerenciar empresas
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />

@@ -8,7 +8,12 @@ export function useAppLayout() {
   const { getCompanies } = companyServices;
   const { getUserInfo } = profileServices;
   
-  const { data: companies, isLoading: isLoadingCompanies } = useQuery({
+  const {
+    data: companies,
+    isLoading: isLoadingCompanies,
+    isError: isCompaniesError,
+    refetch: refetchCompanies,
+  } = useQuery({
     queryKey: ['getCompanies'],
     queryFn: getCompanies,
   });
@@ -29,7 +34,7 @@ export function useAppLayout() {
     queryFn: getUserInfo,
   });
 
-  const isLoading = isLoadingCompanies && isLoadingUserInfo;
+  const isLoading = isLoadingCompanies || isLoadingUserInfo;
 
   return {
     modalShouldOpen,
@@ -37,6 +42,7 @@ export function useAppLayout() {
     userData,
     companies,
     isLoading,
+    isCompaniesError,
+    refetchCompanies,
   }
-
 }

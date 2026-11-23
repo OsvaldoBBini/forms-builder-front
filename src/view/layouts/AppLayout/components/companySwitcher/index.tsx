@@ -19,7 +19,6 @@ import { useCallback, useEffect, useState } from "react"
 import type { ICompany } from "@/app/services/companyServices/getCompanies"
 import { CompanyDialog } from "../companyDialog"
 import { useCompany } from "@/app/hooks/useCompany"
-import { useShallow } from 'zustand/react/shallow'
 import { Button } from "@/components/ui/button"
 
 
@@ -32,39 +31,23 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const { isMobile } = useSidebar()
 
-  const { companyId, setCompanyId } = useCompany(
-    useShallow((state) => ({
-      companyId: state.companyId,
-      setCompanyId: state.setCompanyId,
-    })
-  ));
-
-  const [defaultCompany, setDefaultCompany] = useState<ICompany | undefined>(() => {
-    const isTheDefaultCompany = companies?.filter((companie) => companie.isDefault)[0];
-    if (isTheDefaultCompany) {
-      setCompanyId(isTheDefaultCompany.companyId);
-      return isTheDefaultCompany;
-    }
-  });
+  const companyId = useCompany((state) => state.companyId);
+  const setCompanyId = useCompany((state) => state.setCompanyId);
+  const selectedCompany = companies?.find((company) => company.companyId === companyId);
 
   const [companyToUpdate, setCompanyToUpdate] = useState<ICompany | null>(null);
 
   useEffect(() => {
-  const selectedCompany =
-    companies?.find((company) => company.companyId === defaultCompany?.companyId) ??
-    companies?.find((company) => company.isDefault) ??
-    companies?.[0]
+    if (!companies?.length) return;
+    if (companies.some((company) => company.companyId === companyId)) return;
 
-  if (selectedCompany) {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setDefaultCompany(selectedCompany)
-    setCompanyId(selectedCompany.companyId)
-  }
-}, [companies, defaultCompany?.companyId, setCompanyId])
+    const initialCompany =
+      companies.find((company) => company.isDefault) ?? companies[0];
+    setCompanyId(initialCompany.companyId);
+  }, [companies, companyId, setCompanyId]);
 
   const handleChangeCompany = (company: ICompany) => {
     setCompanyId(company.companyId);
-    setDefaultCompany(company);
   }
 
   const handleUpdateCompany = (company: ICompany) => {
@@ -78,8 +61,7 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
     handleModalOpen();
   }
   const handleCompanyChange = (company: ICompany) => {
-    if (company.isDefault || company.companyId === companyId) {
-      setDefaultCompany(company);
+    if (company.isDefault || company.companyId === companyId || !companyId) {
       setCompanyId(company.companyId);
     }
   }
@@ -100,14 +82,14 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
-                { 
-                  defaultCompany &&  
+                {
+                  selectedCompany &&
                   <>
                     <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                       <Building2 className="size-4" />
                     </div>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">{defaultCompany.companyName}</span>
+                      <span className="truncate font-medium">{selectedCompany.companyName}</span>
                     </div>
                     <ChevronsUpDown className="ml-auto" />
                   </>
@@ -126,9 +108,8 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
               </DropdownMenuLabel>
 
               { companies && companies.map((company: ICompany) => (
-                <div className="flex gap-1 items-center">
+                <div className="flex gap-1 items-center" key={company.companyId}>
                   <DropdownMenuItem
-                    key={company.companyName}
                     onClick={() => handleChangeCompany(company)}
                     className="gap-2 p-2 flex-1"
                   >
@@ -161,8 +142,12 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
       </SidebarMenu>
 
       <CompanyDialog
-        title="Nova empresa"
-        description="Insira o nome da empresa para cadastrá-la no sistema."
+        title={companyToUpdate ? "Editar empresa" : "Nova empresa"}
+        description={
+          companyToUpdate
+            ? "Atualize os dados da empresa."
+            : "Insira o nome da empresa para cadastrá-la no sistema."
+        }
         canSetDefault
         canClose
         companyToUpdate={companyToUpdate}

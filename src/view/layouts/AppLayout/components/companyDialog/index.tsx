@@ -97,39 +97,26 @@ export function CompanyDialog({
 
   const handleSubmit = hookFormSubmit(async (data: FormData) => {
     try {
-      if (companyToUpdate) {
-        await updateCompany({...data, companyId: companyToUpdate.companyId})
-        onCompanyChange?.({
-          ...companyToUpdate,
-          companyName: data.companyName,
-          cnpj: data.cnpj,
-          isDefault: data.isDefault
-        })
-        triggerToast({
-          toastType: "success",
-          toastMessage: "Empresa atualizada com sucesso"
-        })
-      } else {
-        const createdCompany = await mutateAsync(data)
-        onCompanyChange?.({
-          ...createdCompany,
-          cnpj: data.cnpj
-        })
-        triggerToast({
-          toastType: "success",
-          toastMessage: "Empresa cadastrada com sucesso"
-        }) 
-      }
+      const savedCompany = companyToUpdate
+        ? await updateCompany({ ...data, companyId: companyToUpdate.companyId })
+        : await mutateAsync(data);
+
+      onCompanyChange?.(savedCompany);
+      triggerToast({
+        toastType: "success",
+        toastMessage: companyToUpdate
+          ? "Empresa atualizada com sucesso"
+          : "Empresa cadastrada com sucesso"
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ["getCompanies"] });
+      onDialogStatus?.(false);
     }
     catch {
       triggerToast({
         toastType: "error",
-        toastMessage: "Erro ao cadastrar ou atualizar sua empresa. Tente novamento mais tarde"
+        toastMessage: "Erro ao salvar a empresa. Tente novamente mais tarde"
       })
-    } 
-    finally {
-      await queryClient.invalidateQueries({ queryKey: ['getCompanies'] });
-      if (onDialogStatus) onDialogStatus(false);
     }
   });
 
@@ -227,7 +214,7 @@ export function CompanyDialog({
         <Separator/>
 
         <DialogFooter className="p-2">
-          {canClose && <Button onClick={(e) => {
+          {canClose && <Button disabled={isLoading} onClick={(e) => {
             e.preventDefault();
             handleClose()
           }} 
