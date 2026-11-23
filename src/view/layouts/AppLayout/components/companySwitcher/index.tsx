@@ -1,4 +1,4 @@
-import { ChevronsUpDown, Plus } from "lucide-react"
+import { ChevronsUpDown, Pencil, Plus } from "lucide-react"
 import { Building2, Tag } from "lucide-react"
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ import type { ICompany } from "@/app/services/companyServices/getCompanies"
 import { CompanyDialog } from "../companyDialog"
 import { useCompany } from "@/app/hooks/useCompany"
 import { useShallow } from 'zustand/react/shallow'
+import { Button } from "@/components/ui/button"
 
 
 interface CompanySwitcher {
@@ -31,8 +32,9 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const { isMobile } = useSidebar()
 
-  const { setCompanyId } = useCompany(
+  const { companyId, setCompanyId } = useCompany(
     useShallow((state) => ({
+      companyId: state.companyId,
       setCompanyId: state.setCompanyId,
     })
   ));
@@ -44,6 +46,8 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
       return isTheDefaultCompany;
     }
   });
+
+  const [companyToUpdate, setCompanyToUpdate] = useState<ICompany | null>(null);
 
   useEffect(() => {
   const selectedCompany =
@@ -63,10 +67,28 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
     setDefaultCompany(company);
   }
 
+  const handleUpdateCompany = (company: ICompany) => {
+    setCompanyToUpdate(company);
+    handleModalOpen();
+  }
+
   const handleModalOpen = () => setModalOpen(true);
+  const handleAddCompany = () => {
+    setCompanyToUpdate(null);
+    handleModalOpen();
+  }
+  const handleCompanyChange = (company: ICompany) => {
+    if (company.isDefault || company.companyId === companyId) {
+      setDefaultCompany(company);
+      setCompanyId(company.companyId);
+    }
+  }
   const handleModalClose = useCallback(
-    (status: boolean) => setModalOpen(status), 
-  [setModalOpen])
+    (status: boolean) => {
+      setModalOpen(status)
+      if (companyToUpdate) setCompanyToUpdate(null);
+    }, 
+  [companyToUpdate])
 
   return (
       <>
@@ -104,24 +126,29 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
               </DropdownMenuLabel>
 
               { companies && companies.map((company: ICompany) => (
-                <DropdownMenuItem
-                  key={company.companyName}
-                  onClick={() => handleChangeCompany(company)}
-                  className="gap-2 p-2"
-                >
-                  <div className="flex size-6 items-center justify-center rounded-md border">
-                    <Building2 className="size-3.5 shrink-0" />
-                  </div>
-                  {company.companyName}
-                  <DropdownMenuShortcut>
-                    {company.isDefault && <Tag className="  size-3.5"/>}
-                  </DropdownMenuShortcut>
-                </DropdownMenuItem>
+                <div className="flex gap-1 items-center">
+                  <DropdownMenuItem
+                    key={company.companyName}
+                    onClick={() => handleChangeCompany(company)}
+                    className="gap-2 p-2 flex-1"
+                  >
+                    <div className="flex size-6 items-center justify-center rounded-md border">
+                      <Building2 className="size-3.5 shrink-0" />
+                    </div>
+                    {company.companyName}
+                    <DropdownMenuShortcut>
+                      {company.isDefault && <Tag className="  size-3.5"/>}
+                    </DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                  <Button size="icon" variant="ghost" onClick={() => handleUpdateCompany(company)}>
+                    <Pencil />
+                  </Button>
+                </div>
               ))}
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem className="gap-2 p-2" onClick={handleModalOpen}>
+              <DropdownMenuItem className="gap-2 p-2" onClick={handleAddCompany}>
                 <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                   <Plus className="size-4" />
                 </div>
@@ -138,8 +165,10 @@ export function CompanySwitcher({ companies }: CompanySwitcher) {
         description="Insira o nome da empresa para cadastrá-la no sistema."
         canSetDefault
         canClose
+        companyToUpdate={companyToUpdate}
         open={isModalOpen}
         onDialogStatus={handleModalClose}
+        onCompanyChange={handleCompanyChange}
       />
       </>
   )

@@ -3,6 +3,7 @@ import { httpClient } from "../httpClient";
 export interface ICompany {
   userId: string;
   companyId: string;
+  cnpj: string;
   companyName: string;
   role: string;
   isDefault: boolean

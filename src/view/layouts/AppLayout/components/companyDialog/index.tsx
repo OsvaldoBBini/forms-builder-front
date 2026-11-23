@@ -21,6 +21,9 @@ import { companyServices } from "@/app/services/companyServices"
 import { triggerToast } from "@/utils/toaster"
 import { Spinner } from "@/components/ui/spinner"
 import { Separator } from "@/components/ui/separator"
+import type { ICompany } from "@/app/services/companyServices/getCompanies"
+import type { UpdateCompanyParams } from "@/app/services/companyServices/updateCompany"
+import { useEffect, useMemo } from "react"
 
 interface CompanyDialogInterface {
   title: string;
@@ -28,7 +31,9 @@ interface CompanyDialogInterface {
   canSetDefault?: boolean;
   canClose?: boolean;
   open: boolean;
+  companyToUpdate: ICompany | null;
   onDialogStatus?: (status: boolean) => void;
+  onCompanyChange?: (company: ICompany) => void;
 }
 
 const schema = z.object({
@@ -47,46 +52,92 @@ export function CompanyDialog({
   canSetDefault = false, 
   canClose = false, 
   open,
-  onDialogStatus
+  companyToUpdate,
+  onDialogStatus,
+  onCompanyChange
 }: CompanyDialogInterface) {
 
   const queryClient = useQueryClient();
+
+  const defaultValues = useMemo(() => ({ 
+    companyName: "",
+    cnpj: "",
+    isDefault: false
+  }), [])
   
   const { 
-    handleSubmit: hookFormSubmit, register, control, formState: { errors } 
+    handleSubmit: hookFormSubmit, reset, register, control, formState: { errors } 
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { companyName: "", cnpj: "", isDefault: true }
+    defaultValues:  defaultValues
   });
+
+  useEffect(() => {
+    reset(
+      companyToUpdate
+        ? {
+          companyName: companyToUpdate.companyName,
+          cnpj: companyToUpdate.cnpj,
+          isDefault: companyToUpdate.isDefault
+        }
+      : defaultValues
+    )
+  }, [companyToUpdate, defaultValues, open, reset])
 
   const { mutateAsync, isPending } = useMutation({
     mutationKey: ["createCompany"],
     mutationFn: async (data: CreateCompanyParams) => { return companyServices.createCompany({ ...data }) }
   });
 
+  const { mutateAsync: updateCompany, isPending: isPendingCompanyUpdate } = useMutation({
+    mutationKey: ["updateCompany"],
+    mutationFn: async (data: UpdateCompanyParams) => 
+      { return companyServices.updateCompany({ ...data }) }
+  });
+
   const handleSubmit = hookFormSubmit(async (data: FormData) => {
-    await mutateAsync(data).then(async () => {
-      
-      return triggerToast({
-        toastType: "success",
-        toastMessage: "Empresa cadastrada com sucesso"
-      }) 
+    try {
+      if (companyToUpdate) {
+        await updateCompany({...data, companyId: companyToUpdate.companyId})
+        onCompanyChange?.({
+          ...companyToUpdate,
+          companyName: data.companyName,
+          cnpj: data.cnpj,
+          isDefault: data.isDefault
+        })
+        triggerToast({
+          toastType: "success",
+          toastMessage: "Empresa atualizada com sucesso"
+        })
+      } else {
+        const createdCompany = await mutateAsync(data)
+        onCompanyChange?.({
+          ...createdCompany,
+          cnpj: data.cnpj
+        })
+        triggerToast({
+          toastType: "success",
+          toastMessage: "Empresa cadastrada com sucesso"
+        }) 
+      }
     }
-  ).catch(() => {
-    return triggerToast({
-      toastType: "error",
-      toastMessage: "Erro ao cadastrar sua empresa. Tente novamento mais tarde"
-    })
-  }).finally(
-    async () => {
-      if (onDialogStatus) onDialogStatus(false);
+    catch {
+      triggerToast({
+        toastType: "error",
+        toastMessage: "Erro ao cadastrar ou atualizar sua empresa. Tente novamento mais tarde"
+      })
+    } 
+    finally {
       await queryClient.invalidateQueries({ queryKey: ['getCompanies'] });
-    })
+      if (onDialogStatus) onDialogStatus(false);
+    }
   });
 
   const handleClose = () => {
     if (onDialogStatus) onDialogStatus(false) 
   };
+
+  const isLoading = isPending || isPendingCompanyUpdate
 
   return (
     <Dialog open={open}>
@@ -181,9 +232,9 @@ export function CompanyDialog({
             handleClose()
           }} 
           variant="destructive">Cancelar</Button>}
-          <Button type="submit" disabled={isPending} form="company-form">
-            {isPending && <Spinner data-icon="inline-start"/>}
-            Cadastrar
+          <Button type="submit" disabled={isLoading} form="company-form">
+            {isLoading && <Spinner data-icon="inline-start"/>}
+            {companyToUpdate ? "Atualizar" : "Cadastrar"}
           </Button>
         </DialogFooter>
       </DialogContent>
