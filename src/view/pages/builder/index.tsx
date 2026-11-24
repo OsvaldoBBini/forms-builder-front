@@ -32,7 +32,7 @@ export function Builder() {
       handleSaveDialogOpen,
       retrieveField,
       formId,
-      isLoadingFields
+      isFetchingFields
     } = useFormBuilder(companyId as string, formMode);
 
   const { 
@@ -73,8 +73,8 @@ export function Builder() {
   return (
     <div className="relative flex min-h-[calc(96dvh-3rem)] flex-col">
 
-      {isLoadingFields && <InitialLoader customText="Carregando campos do formulário..." />}
-      {!isLoadingFields &&
+      {isFetchingFields && <InitialLoader customText="Carregando campos do formulário..." />}
+      {!isFetchingFields &&
         <section className="flex flex-col gap-y-4">
           <div className="flex flex-col gap-y-4">  
             {

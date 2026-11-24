@@ -1,17 +1,16 @@
 import type { IField } from "@/view/pages/builder/hooks/useFormBuilder";
-
-// import { httpClient } from "../httpClient";
+import { httpClient } from "../httpClient";
 
 export interface IFields{
   formId: string;
   fields: IField[];
 }
 
-// interface FormsResponse { data: { items: IForm[] } }
+interface UpdateFieldsResponse { data: { formId: string } }
 
 export async function updateFields(companyId: string, formData: IFields) {
-  console.log('updateForms', companyId)
-
-  const { fields } = formData;
-  localStorage.setItem(`${companyId}/fields/${formData.formId}`, JSON.stringify(fields));
+  const { fields, formId } = formData;
+  const { data: response } = await httpClient.put<UpdateFieldsResponse>(`/companies/${companyId}/forms/${formId}/fields`, { fields }, {skipAuth: false});
+  const { data } = response
+  return data.formId
 }

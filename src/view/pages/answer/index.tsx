@@ -15,6 +15,7 @@ import { useShallow } from "zustand/react/shallow";
 import type { IField, IFieldOption } from "../builder/hooks/useFormBuilder";
 import { useNavigateTo } from "@/hooks/useNavigateTo";
 import { Button } from "@/components/ui/button";
+import { InitialLoader } from "@/components/loaders/initialLoader";
 
 export function Answer() {
 
@@ -25,11 +26,13 @@ export function Answer() {
   const { formId, answerId } = useParams<{ formId: string; answerId: string }>();
   const { customer } = useCustomer(useShallow(state => ({ customer: state.customer })));
 
-  const { data: formFields } = useQuery({
+  const { data: formFields, isPending: isFormPending, isFetching: isFetchingForm } = useQuery({
     queryKey: ['getFields', companyId, formId],
     queryFn: () => getFields(companyId as string, formId as string),
     enabled: Boolean(companyId && formId),
+    refetchOnMount: "always"
   });
+  const isLoadingForm = isFormPending || isFetchingForm;
 
   const dependency = useMemo(() => { return formFields && formFields.flatMap((field: IField) => 
     { 
@@ -72,49 +75,54 @@ export function Answer() {
 
   return (
     <div className="flex flex-col gap-4 mb-4">
-      {customer && (
-        <Item variant="muted" size="xs">
-          <ItemMedia variant="icon">
-            <BookUser />
-          </ItemMedia>
-          <ItemContent>
-            <ItemTitle>Cliente selecionado</ItemTitle>
-            <ItemDescription>
-              <span>
-                {customer.fullName} CPF: {customer.cpf}
-              </span>
-            </ItemDescription>
-          </ItemContent>
-        </Item>
+      {isLoadingForm ? (
+        <InitialLoader customText="Carregando formulário para resposta..." />
+      ) : (
+        <>
+          {customer && (
+            <Item variant="muted" size="xs">
+              <ItemMedia variant="icon">
+                <BookUser />
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle>Cliente selecionado</ItemTitle>
+                <ItemDescription>
+                  <span>
+                    {customer.fullName} CPF: {customer.cpf}
+                  </span>
+                </ItemDescription>
+              </ItemContent>
+            </Item>
+          )}
+
+          <form className="flex flex-col gap-4" id="answer" onSubmit={handleSubmit}>
+            {formFields && formFields.map((field: any) => {
+              const FieldComponent = retrieveField(field.fieldType) as React.ElementType;
+
+              const isDisabled = handleDisabled(field)
+              
+              return (
+                <Card key={field.fieldId}>
+                  <CardContent>
+                    <FieldComponent 
+                      {...field} 
+                      name={`answers.${field.fieldId}`} 
+                      register={register} 
+                      control={control}
+                      disabled={isDisabled} 
+                    />
+                  </CardContent>
+                </Card>
+              )
+            })}
+
+            <div className="flex justify-end gap-2">
+              <Button variant="destructive" onClick={handleCancel}>Cancelar</Button>
+              <Button type="submit" form="answer">Salvar</Button>
+            </div>
+          </form>
+        </>
       )}
-
-      <form className="flex flex-col gap-4" id="answer" onSubmit={handleSubmit}>
-        {formFields && formFields.map((field: any) => {
-          const FieldComponent = retrieveField(field.fieldType) as React.ElementType;
-
-          const isDisabled = handleDisabled(field)
-          
-          return (
-            <Card key={field.fieldId}>
-              <CardContent>
-                <FieldComponent 
-                  {...field} 
-                  name={`answers.${field.fieldId}`} 
-                  register={register} 
-                  control={control}
-                  disabled={isDisabled} 
-                />
-              </CardContent>
-            </Card>
-          )
-        })}
-
-        <div className="flex justify-end gap-2">
-          <Button variant="destructive" onClick={handleCancel}>Cancelar</Button>
-          <Button type="submit" form="answer">Salvar</Button>
-        </div>
-      </form>
-
     </div>
   )
 }

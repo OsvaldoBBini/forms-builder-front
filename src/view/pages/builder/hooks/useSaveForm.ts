@@ -45,13 +45,23 @@ export function useSaveForm({ formId, fields, companyId }: IUseSaveFormProps) {
     mutationFn: async (data: IFields) => { return formsServices.updateFields(companyId, data) }
   });
 
-  const handleUpdateFields = useCallback(() => {
-    if (formId) updateFields({formId, fields});
-    triggerToast({
-      toastType: "success",
-      toastMessage: "Campos atualizados com sucesso",
-      toastProps: { position: "top-center" }
-    })
+  const handleUpdateFields = useCallback(async () => {
+    if (!formId) return;
+
+    try {
+      await updateFields({formId, fields});
+      triggerToast({
+        toastType: "success",
+        toastMessage: "Campos atualizados com sucesso",
+        toastProps: { position: "top-center" }
+      });
+    } catch {
+      triggerToast({
+        toastType: "error",
+        toastMessage: "Erro ao atualizar os campos. Tente novamente mais tarde",
+        toastProps: { position: "top-center" }
+      });
+    }
   }, [fields, formId, updateFields]);
 
   const handleSubmit = hookFormSubmit(async (data: FormData) => {

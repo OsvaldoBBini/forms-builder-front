@@ -28,14 +28,30 @@ export interface IField {
   aiAnalysis: IFieldAiAnalysis
 }
 
+function removeLinkedQuestion(field: IField, removedFieldId: string): IField {
+  if (!field.options) return field;
+
+  return {
+    ...field,
+    options: field.options.map(option => {
+      if (option.linkedToAnotherQuestion?.fieldId !== removedFieldId) return option;
+
+      const unlinkedOption = { ...option };
+      delete unlinkedOption.linkedToAnotherQuestion;
+      return unlinkedOption;
+    })
+  };
+}
+
 export function useFormBuilder(companyId: string, formMode: "new" | "edit") {
   const { formId } = useParams<{ formId: string }>();
   const { retrieveField } = useFields();
 
-  const { data: formFields, isLoading: isLoadingFields } = useQuery({
+  const { data: formFields, isFetching: isFetchingFields } = useQuery({
     queryKey: ['getFields', formMode, companyId, formId],
     queryFn: () => getFields(companyId as string, formId as string),
-    enabled: formMode === "edit" && Boolean(companyId && formId)
+    enabled: formMode === "edit" && Boolean(companyId && formId),
+    refetchOnMount: "always"
   });
 
   const fieldTypes = useMemo(() => [
@@ -71,7 +87,18 @@ export function useFormBuilder(companyId: string, formMode: "new" | "edit") {
   
   const handleEditField = (fields: IField) => setSelectedField(fields);
   const handleEmptySelection = useCallback(() => setSelectedField(null), []);
-  const handleRemoveField = (id: string) => setFields(prevState => prevState.filter(item => item.fieldId !== id));
+  const handleRemoveField = (id: string) => {
+    setFields(prevState =>
+      prevState
+        .filter(field => field.fieldId !== id)
+        .map(field => removeLinkedQuestion(field, id))
+    );
+    setSelectedField(prevState =>
+      prevState && prevState.fieldId !== id
+        ? removeLinkedQuestion(prevState, id)
+        : null
+    );
+  };
 
   const fieldTypesWithOptions = useMemo(() => ["radioSelection", "checkbox", "selectField"], []);
 
@@ -118,6 +145,6 @@ export function useFormBuilder(companyId: string, formMode: "new" | "edit") {
     handleSaveDialogOpen,
     retrieveField,
     formId,
-    isLoadingFields
+    isFetchingFields
   }
 }
