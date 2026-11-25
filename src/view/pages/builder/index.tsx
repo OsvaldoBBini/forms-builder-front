@@ -11,6 +11,7 @@ import { useCallback } from "react";
 import { useFormBuilder } from "./hooks/useFormBuilder";
 import { useCompany } from "@/app/hooks/useCompany";
 import { InitialLoader } from "@/components/loaders/initialLoader";
+import { FormNameEditor } from "./components/formNameEditor";
 
 export function Builder() {
 
@@ -76,6 +77,9 @@ export function Builder() {
       {isFetchingFields && <InitialLoader customText="Carregando campos do formulário..." />}
       {!isFetchingFields &&
         <section className="flex flex-col gap-y-4">
+          {formMode === "edit" && formId && companyId && (
+            <FormNameEditor companyId={companyId} formId={formId} />
+          )}
           <div className="flex flex-col gap-y-4">  
             {
               fields.map(( field ) => {

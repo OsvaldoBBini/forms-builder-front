@@ -16,6 +16,7 @@ import type { UseFormRegister } from "node_modules/react-hook-form/dist/types/fo
 import type { FieldErrors } from "node_modules/react-hook-form/dist/types/errors"
 import { Spinner } from "@/components/ui/spinner"
 import { useNavigateTo } from "@/hooks/useNavigateTo"
+import { FORM_NAME_MAX_LENGTH } from "@/utils/formNameValidation"
 
 interface FormSaveInterface {
   open: boolean;
@@ -66,6 +67,7 @@ export function FormSaveDialog({
               </Label>
               <Input 
                 id="formName" 
+                maxLength={FORM_NAME_MAX_LENGTH}
                 {...register("formName")} 
                 aria-invalid={!!errors.formName} 
               />

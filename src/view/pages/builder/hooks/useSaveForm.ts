@@ -9,11 +9,16 @@ import type { IForm } from "@/app/services/formsServices/createForms";
 import { formsServices } from "@/app/services/formsServices";
 import type { IFields } from "@/app/services/formsServices/updateFields";
 import { useCallback } from "react";
+import {
+  FORM_NAME_MAX_LENGTH,
+  FORM_NAME_MIN_LENGTH,
+} from "@/utils/formNameValidation";
 
 const schema = z.object({
   formName: z.string()
-    .min(1, 'O nome completo deve ter pelo menos uma letra')
-    .max(100, 'O nome completo deve ter no máximo 100 letras'),
+    .trim()
+    .min(FORM_NAME_MIN_LENGTH, `O nome do formulário deve ter pelo menos ${FORM_NAME_MIN_LENGTH} caracteres`)
+    .max(FORM_NAME_MAX_LENGTH, `O nome do formulário deve ter no máximo ${FORM_NAME_MAX_LENGTH} caracteres`),
 })
 
 type FormData = z.infer<typeof schema>
