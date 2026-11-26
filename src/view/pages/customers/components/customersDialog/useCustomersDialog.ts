@@ -8,6 +8,7 @@ import { customersServices } from "@/app/services/customersServices"
 import type { ICustomer } from "@/app/services/customersServices/getCustomers"
 import { useEffect } from "react"
 import type { IUpdateCustomer } from "@/app/services/customersServices/updateCustomers"
+import { onlyDigits } from "@/utils/formatDocuments"
 
 interface CompanyDialogInterface {
   companyId: string;
@@ -44,7 +45,7 @@ export function useCustomersDialog({
   const queryClient = useQueryClient();
   
   const { 
-    handleSubmit: hookFormSubmit, register, reset, formState: { errors } 
+    handleSubmit: hookFormSubmit, register, control, reset, formState: { errors } 
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues
@@ -70,16 +71,22 @@ export function useCustomersDialog({
   });
 
   const handleSubmit = hookFormSubmit(async (data: FormData) => {
+    const normalizedData = {
+      ...data,
+      cpf: onlyDigits(data.cpf),
+      phoneNumber: onlyDigits(data.phoneNumber),
+    }
+
     try {
       if (customer) {
-        await updateCustomer({ ...data, customerId: customer.customerId });
+        await updateCustomer({ ...normalizedData, customerId: customer.customerId });
         return triggerToast({
           toastType: "success",
           toastMessage: "Cliente atualizado com sucesso"
         }) 
       }
       
-      await createCustomer(data);
+      await createCustomer(normalizedData);
       return triggerToast({
         toastType: "success",
         toastMessage: "Cliente cadastrado com sucesso"
@@ -109,6 +116,7 @@ export function useCustomersDialog({
   return {
     handleSubmit,
     register,
+    control,
     errors,
     handleClose,
     open,

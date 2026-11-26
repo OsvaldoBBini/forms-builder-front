@@ -15,6 +15,8 @@ import { Spinner } from "@/components/ui/spinner"
 import type { ICustomer } from "@/app/services/customersServices/getCustomers"
 import { useCustomersDialog } from "./useCustomersDialog"
 import { Separator } from "@/components/ui/separator"
+import { Controller } from "react-hook-form"
+import { formatCpf, formatPhone, onlyDigits } from "@/utils/formatDocuments"
 
 interface CompanyDialogInterface {
   companyId: string;
@@ -32,7 +34,7 @@ export function CustomersDialog({
   onEmptyCustomer
 }: CompanyDialogInterface) {
 
-  const { handleSubmit, register, errors, handleClose, isPending } = useCustomersDialog({
+  const { handleSubmit, register, control, errors, handleClose, isPending } = useCustomersDialog({
     companyId,
     customer,
     onDialogStatus,
@@ -93,11 +95,21 @@ export function CustomersDialog({
                 htmlFor="phoneNumber">
                   Número de telefone
               </Label>
-              <Input 
-                id="phoneNumber" 
-                {...register("phoneNumber")} 
-                placeholder="55999999999"
-                aria-invalid={!!errors.phoneNumber} 
+              <Controller
+                control={control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <Input
+                    id="phoneNumber"
+                    name={field.name}
+                    ref={field.ref}
+                    onBlur={field.onBlur}
+                    value={formatPhone(field.value)}
+                    onChange={(event) => field.onChange(onlyDigits(event.target.value).slice(0, 11))}
+                    placeholder="(99) 99999-9999"
+                    aria-invalid={!!errors.phoneNumber}
+                  />
+                )}
               />
               {errors.phoneNumber?.message && (
                 <FieldError className="text-red-600 flex items-center gap-x-1"> 
@@ -112,11 +124,21 @@ export function CustomersDialog({
                 htmlFor="cpf">
                   CPF
               </Label>
-              <Input 
-                id="cpf" 
-                {...register("cpf")} 
-                aria-invalid={!!errors.cpf} 
-                placeholder="09099909099"
+              <Controller
+                control={control}
+                name="cpf"
+                render={({ field }) => (
+                  <Input
+                    id="cpf"
+                    name={field.name}
+                    ref={field.ref}
+                    onBlur={field.onBlur}
+                    value={formatCpf(field.value)}
+                    onChange={(event) => field.onChange(onlyDigits(event.target.value).slice(0, 11))}
+                    aria-invalid={!!errors.cpf}
+                    placeholder="000.000.000-00"
+                  />
+                )}
               />
               {errors.cpf?.message && (
                 <FieldError className="text-red-600 flex items-center gap-x-1"> 

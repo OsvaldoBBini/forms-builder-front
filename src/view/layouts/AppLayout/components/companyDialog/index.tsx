@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator"
 import type { ICompany } from "@/app/services/companyServices/getCompanies"
 import type { UpdateCompanyParams } from "@/app/services/companyServices/updateCompany"
 import { useEffect, useMemo } from "react"
+import { formatCnpj, onlyDigits } from "@/utils/formatDocuments"
 
 interface CompanyDialogInterface {
   title: string;
@@ -162,10 +163,21 @@ export function CompanyDialog({
                 htmlFor="cnpj">
                   Cnpj
               </Label>
-              <Input 
-                id="cnpj" 
-                {...register("cnpj")} 
-                aria-invalid={!!errors.cnpj} 
+              <Controller
+                control={control}
+                name="cnpj"
+                render={({ field }) => (
+                  <Input
+                    id="cnpj"
+                    name={field.name}
+                    ref={field.ref}
+                    onBlur={field.onBlur}
+                    value={formatCnpj(field.value)}
+                    onChange={(event) => field.onChange(onlyDigits(event.target.value).slice(0, 14))}
+                    placeholder="00.000.000/0000-00"
+                    aria-invalid={!!errors.cnpj}
+                  />
+                )}
               />
               {errors.cnpj?.message && (
                 <FieldError className="text-red-600 flex items-center gap-x-1"> 

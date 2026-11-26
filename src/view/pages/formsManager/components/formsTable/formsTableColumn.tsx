@@ -14,7 +14,6 @@ import {
 export interface IForms {
   formId: string;
   formName: string;
-  lastUpdate: string;
   createdAt: string;
 }
 

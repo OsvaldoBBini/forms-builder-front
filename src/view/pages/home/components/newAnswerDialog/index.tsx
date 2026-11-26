@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useCustomer } from "@/app/hooks/useCustomer";
 import { useShallow } from "zustand/react/shallow";
+import { formatCpf } from "@/utils/formatDocuments";
 
 interface NewAnswerDialogProps {
   open: boolean;
@@ -65,7 +66,9 @@ export function NewAnswerDialog({ open, onClose }: NewAnswerDialogProps) {
                 value={ customer }
                 onValueChange={ handleSelectedCustomer }
                 itemToStringLabel={
-                  (customer: ICustomer | null) => `${customer?.fullName} - CPF: ${customer?.cpf}`
+                  (customer: ICustomer | null) => customer
+                    ? `${customer.fullName} - CPF: ${formatCpf(customer.cpf)}`
+                    : ""
                 }
               >
                 <ComboboxInput placeholder="Selecione um cliente" disabled={isLoadingCustomersInfo} className="flex-1"/>
@@ -83,7 +86,7 @@ export function NewAnswerDialog({ open, onClose }: NewAnswerDialogProps) {
                           >
                             <div className="flex flex-col">
                               <span className="font-medium">{item.fullName}</span>
-                              <span className="text-xs text-muted-foreground">CPF: {item.cpf}</span>
+                              <span className="text-xs text-muted-foreground">CPF: {formatCpf(item.cpf)}</span>
                             </div>
                           </ComboboxItem>
                         )}

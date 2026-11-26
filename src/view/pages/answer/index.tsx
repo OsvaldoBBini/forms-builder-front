@@ -16,6 +16,7 @@ import type { IField, IFieldOption } from "../builder/hooks/useFormBuilder";
 import { useNavigateTo } from "@/hooks/useNavigateTo";
 import { Button } from "@/components/ui/button";
 import { InitialLoader } from "@/components/loaders/initialLoader";
+import { formatCpf } from "@/utils/formatDocuments";
 
 export function Answer() {
 
@@ -88,7 +89,7 @@ export function Answer() {
                 <ItemTitle>Cliente selecionado</ItemTitle>
                 <ItemDescription>
                   <span>
-                    {customer.fullName} CPF: {customer.cpf}
+                    {customer.fullName} CPF: {formatCpf(customer.cpf)}
                   </span>
                 </ItemDescription>
               </ItemContent>

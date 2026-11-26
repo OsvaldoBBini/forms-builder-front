@@ -4,6 +4,7 @@ import type { ICustomer } from "@/app/services/customersServices/getCustomers"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { formatCpf, formatPhone } from "@/utils/formatDocuments"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,9 +34,11 @@ export const columns = customersColumnsHelper.columns([
   }),
   customersColumnsHelper.accessor("cpf", {
     header: "Cpf",
+    cell: ({ getValue }) => formatCpf(getValue()),
   }),
   customersColumnsHelper.accessor("phoneNumber", {
     header: "Telefone",
+    cell: ({ getValue }) => formatPhone(getValue()),
   }),
   customersColumnsHelper.display({
     id: "actions",

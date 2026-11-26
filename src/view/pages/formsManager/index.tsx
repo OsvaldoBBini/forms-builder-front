@@ -30,7 +30,7 @@ export function FormsManager () {
     <>
       <Header title="Formulários"/>
       <section className="pt-1">
-        { isLoading && <InitialLoader customText="Estamos carregando seus clientes"/>}
+        { isLoading && <InitialLoader customText="Estamos carregando seus formulários"/>}
         { formsData?.length === 0 && !isLoading && <EmptyForms onOpenModal={handleNewForm}/>}
         { 
           formsData && formsData?.length > 0 && !isLoading && 
